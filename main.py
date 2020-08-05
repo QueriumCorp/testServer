@@ -99,7 +99,8 @@ def gotLicenseQ():
 # Check any pending tasks in testPath
 #######################################
 def gotPendingTaskQ(status="pending"):
-    logging.debug("gotPendingTask")
+    logging.info(f"{os.getpid()}: gotPendingTask")
+    time.sleep(5)
     return []
 
 #######################################
@@ -119,16 +120,18 @@ def startProcQ():
 
     ## Verify not all of the license are used
     if len(PROCESSES)>=int(os.environ.get('licenseLimit')):
+        logging.debug("All licenses are in use")
         return False
 
     ## Verify availability of of a Mathematica license
     if not gotLicenseQ():
+        logging.debug("Unable to acquire a license")
         return False
 
     return True
 
 def aProcess(lock):
-    logging.info(f"{os.getpid()}, Starting a process")
+    logging.info(f"{os.getpid()}: Starting a process")
 
     runTestingQ = True
     lock.acquire()
@@ -150,20 +153,22 @@ def aProcess(lock):
 
     except SystemExit as e:
         if e.code == EXITCODE_NOMMA:
-            logging.info(f"{os.getpid()} No pending mma")
+            logging.info(f"{os.getpid()}: No pending task")
         if e.code == EXITCODE_NOLICENSE:
-            logging.info(f"{os.getpid()} No Mathematica license")
+            logging.info(f"{os.getpid()}: No Mathematica license")
         if e.code == EXITCODE_IMGFAIL:
-            logging.info(f"{os.getpid()} Failed on making a StepWise image")
+            logging.info(f"{os.getpid()}: Failed on making a StepWise image")
         if e.code == EXITCODE_REPOFAIL:
-            logging.info(f"{os.getpid()} Failed on cloning the CommonCore repo")
+            logging.info(f"{os.getpid()}: Failed on cloning the CommonCore repo")
         if e.code == EXITCODE_BADMAINPATH:
-            logging.info(f"{os.getpid()} Invalid main path")
+            logging.info(f"{os.getpid()}: Invalid main path")
         runTestingQ = False
     finally:
         lock.release()
 
-    time.sleep(int(15))
+    if runTestingQ==True:
+        logging.info(f"{os.getpid()}: running the test code!")
+        time.sleep(5)
 
 
 ###############################################################################
