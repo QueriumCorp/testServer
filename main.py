@@ -24,9 +24,11 @@ from subprocess import TimeoutExpired
 
 import os
 import time
-import test
 import sys
 import json
+
+import test
+import task
 
 EXITCODE_NOMMA = 5
 EXITCODE_NOLICENSE = 6
@@ -99,6 +101,7 @@ def gotLicenseQ():
 # Check any pending tasks in testPath
 #######################################
 def gotPendingTaskQ(status="pending"):
+
     logging.info(f"{os.getpid()}: gotPendingTask")
     time.sleep(5)
     return []
@@ -141,11 +144,9 @@ def aProcess(lock):
             sys.exit(EXITCODE_NOLICENSE)
 
         ## Get a pending mma info
-        task = gotPendingTaskQ()
-        if len(task)<1:
+        aTask = task.next()
+        if len(aTask)<1:
             sys.exit(EXITCODE_NOMMA)
-
-        ## Update id's status='aquired'
 
         ## Clone the CommonCore repo
 
@@ -177,8 +178,8 @@ def aProcess(lock):
 if __name__ == '__main__':
 
     ### testing code
-    test.helloWorld()
-    # sys.exit(0)
+    test.taskNext()
+    sys.exit(0)
 
     ### init the environment
     init()
