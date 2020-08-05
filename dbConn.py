@@ -41,7 +41,7 @@ def getFields(tbl):
             "ruleMatchTimeOutTime","msg","jiraResp","started","finished","created"
             ],
         "testPath": [
-            "name","question_id","path_id","trace_id","diff_id","author",
+            "id","name","question_id","path_id","trace_id","diff_id","author",
             "gradeStyle","policies","status","limitStepTime","limitSteps",
             "limitPathTime","pid","stepCount","stepsCompleted","timeCompleted",
             "host","gitBranch","gitHash","mmaVersion","timeOutTime",
@@ -56,7 +56,7 @@ def getFields(tbl):
 ###############################################################################
 
 #######################################
-# Get a row from the testSchedule table based on the condition pair of
+# Get a row from a table based on the condition pair of
 # cols and vals
 # parameters:
 # tbl: a table name
