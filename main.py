@@ -29,6 +29,8 @@ import json
 
 import test
 import task
+import gitRepo
+import dbConn
 
 EXITCODE_NOMMA = 5
 EXITCODE_NOLICENSE = 6
@@ -149,6 +151,13 @@ def aProcess(lock):
             sys.exit(EXITCODE_NOMMA)
 
         ## Clone the CommonCore repo
+        env = gitRepo.mkEnv(aTask)
+        if env['status']==False:
+            dbConn.modMultiVals(
+                'testPath',
+                ['id'], [aTask['id']],
+                ['status', 'msg'], ['failed', env['result']]
+            )
 
         ## Make a StepWise image
 
@@ -178,7 +187,10 @@ def aProcess(lock):
 if __name__ == '__main__':
 
     ### testing code
-    test.taskNext()
+    # test.taskNext()
+    # test.repoDir()
+    test.repo()
+    # test.helloWorld()
     sys.exit(0)
 
     ### init the environment
