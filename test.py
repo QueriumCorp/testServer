@@ -8,6 +8,7 @@ import os
 import task
 import gitRepo
 import dbConn
+import image
 
 def helloWorld():
     print("Hello World!")
@@ -34,3 +35,16 @@ def repo():
             ['status', 'msg'], ['failed', rslt['result']]
         )
     print (rslt)
+
+def allDir():
+    aTask = task.next()
+    tmp = gitRepo.mkAllDir(aTask)
+    print (tmp)
+
+def mkImg():
+    aTask = task.next()
+    # dirs = gitRepo.mkAllDir(aTask)
+    rsltEnv = gitRepo.mkEnv(aTask)
+    if rsltEnv['status']==True:
+        tmp = image.make(aTask, rsltEnv['result'])
+        print(tmp)

@@ -26,7 +26,7 @@ def mkDir(dir):
 def mkAllDir(task):
     dirRoot = os.path.join(mkDir(os.environ.get("dirTest")), task['gitHash'])
     dirRepo = os.path.join(mkDir(dirRoot), os.environ.get("repoName"))
-    dirImg = os.path.join(mkDir(dirRoot), "image")
+    dirImg = mkDir(os.path.join(dirRoot, "image"))
 
     return {
         "dirRoot": dirRoot,

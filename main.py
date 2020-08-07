@@ -171,7 +171,8 @@ def aProcess(lock):
         if e.code == EXITCODE_IMGFAIL:
             logging.info(f"{os.getpid()}: Failed on making a StepWise image")
         if e.code == EXITCODE_REPOFAIL:
-            logging.info(f"{os.getpid()}: Failed on cloning the CommonCore repo")
+            logging.info(
+                f"{os.getpid()}: Failed on cloning the CommonCore repo")
         if e.code == EXITCODE_BADMAINPATH:
             logging.info(f"{os.getpid()}: Invalid main path")
         runTestingQ = False
@@ -191,8 +192,9 @@ if __name__ == '__main__':
     ### testing code
     # test.taskNext()
     # test.repoDir()
-    test.repo()
-    # test.helloWorld()
+    # test.repo()
+    # test.allDir()
+    test.mkImg()
     sys.exit(0)
 
     ### init the environment
