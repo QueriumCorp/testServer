@@ -158,8 +158,10 @@ def aProcess(lock):
                 ['id'], [aTask['id']],
                 ['status', 'msg'], ['failed', env['result']]
             )
+            sys.exit(EXITCODE_REPOFAIL)
 
         ## Make a StepWise image
+
 
     except SystemExit as e:
         if e.code == EXITCODE_NOMMA:
