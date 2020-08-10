@@ -204,7 +204,7 @@ def execQuery(sql, vals, fldsRtrn=[], mkObjQ=False):
 def modTbl(tbl, colsCond, valsCond, col, val):
     sqlCond = "=%s AND ".join(colsCond)+"=%s "
     sql = f"UPDATE {tbl} SET {col}='{val}' WHERE {sqlCond};"
-    logging.debug(f"modTbl - sql: {sql}")
+    # logging.debug(f"modTbl - sql: {sql}")
 
     conn = pymysql.connect(
         os.environ.get('DB_HOST'), os.environ.get('DB_USER'),
