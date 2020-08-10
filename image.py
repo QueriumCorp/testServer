@@ -41,10 +41,23 @@ def toStr(data):
 ###############################################################################
 # Main logic
 ###############################################################################
-def make(aTask, dirs):
+def make(aTask, dirs, rmImgQ=True):
     ## Arguments to mkImg
     args = mkArgs(dirs)
-    print("args:", args)
+    logging.debug(f"args: {args}")
+
+    ## If an old image is present, delete it
+    if rmImgQ and os.path.isfile(args['img']):
+        os.remove(args['img'])
+        logging.info(f"Removed an old image: {args['img']}")
+
+    ## No need to create a new image case
+    if rmImgQ==False and os.path.isfile(args['img']):
+        logging.info(f"StepWise image already exists: {args['img']}")
+        return {
+            "status": True,
+            "result": args['img']
+        }
 
     ## Run the imaging script to generate a StepWise image
     try:

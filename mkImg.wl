@@ -57,12 +57,6 @@ Print[$ProcessID, " Loading StepWise ....."];
 Print[$ProcessID, " Configuring StepWise variables ....."];
 StepWise`$$InTesting$$ = Global`$confCache["InTesting"];
 
-(*** Delete cache image file if it already exists ***)
-If[FileExistsQ[Global`$confCache["img"]],
-  DeleteFile[Global`$confCache["img"]];
-  Print[$ProcessID, " Deleted old cache image"];
-];
-
 (*** Create cache image ***)
 Print[$ProcessID, " Creating a new StepWise image ....."];
 Share[];
