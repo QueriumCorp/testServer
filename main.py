@@ -31,6 +31,7 @@ import test
 import task
 import gitRepo
 import dbConn
+import image
 
 EXITCODE_NOMMA = 5
 EXITCODE_NOLICENSE = 6
@@ -161,20 +162,27 @@ def aProcess(lock):
             sys.exit(EXITCODE_REPOFAIL)
 
         ## Make a StepWise image
-
+        img = image.make(aTask, env['result'])
+        if img['status']==False:
+            dbConn.modMultiVals(
+                'testPath',
+                ['id'], [aTask['id']],
+                ['status', 'msg'], ['failed', img['result']]
+            )
+            sys.exit(EXITCODE_IMGFAIL)
 
     except SystemExit as e:
         if e.code == EXITCODE_NOMMA:
-            logging.info(f"{os.getpid()}: No pending task")
+            logging.warning(f"{os.getpid()}: No pending task")
         if e.code == EXITCODE_NOLICENSE:
-            logging.info(f"{os.getpid()}: No Mathematica license")
+            logging.warning(f"{os.getpid()}: No Mathematica license")
         if e.code == EXITCODE_IMGFAIL:
-            logging.info(f"{os.getpid()}: Failed on making a StepWise image")
+            logging.warning(f"{os.getpid()}: Failed on making a StepWise image")
         if e.code == EXITCODE_REPOFAIL:
-            logging.info(
+            logging.warning(
                 f"{os.getpid()}: Failed on cloning the CommonCore repo")
         if e.code == EXITCODE_BADMAINPATH:
-            logging.info(f"{os.getpid()}: Invalid main path")
+            logging.warning(f"{os.getpid()}: Invalid main path")
         runTestingQ = False
     finally:
         lock.release()
@@ -194,8 +202,8 @@ if __name__ == '__main__':
     # test.repoDir()
     # test.repo()
     # test.allDir()
-    test.mkImg()
-    sys.exit(0)
+    # test.mkImg()
+    # sys.exit(0)
 
     ### init the environment
     init()
