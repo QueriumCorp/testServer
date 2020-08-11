@@ -189,6 +189,7 @@ def aProcess(lock):
 
     if runTestingQ==True:
         logging.info(f"{os.getpid()}: running the test code!")
+        task.run(aTask)
         time.sleep(5)
 
 
@@ -203,7 +204,8 @@ if __name__ == '__main__':
     # test.repo()
     # test.allDir()
     # test.mkImg()
-    # sys.exit(0)
+    test.runTask()
+    sys.exit(0)
 
     ### init the environment
     init()

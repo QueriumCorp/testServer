@@ -9,6 +9,7 @@ import task
 import gitRepo
 import dbConn
 import image
+import sys
 
 def helloWorld():
     print("Hello World!")
@@ -54,3 +55,27 @@ def mkImg():
                 ['id'], [aTask['id']],
                 ['status', 'msg'], ['failed', rsltImg['result']]
             )
+
+def runTask():
+    dbConn.modMultiVals(
+        'testPath',
+        ['id'], [49],
+        ['status'], ['pending']
+    )
+    aTask = task.next()
+    rsltEnv = gitRepo.mkEnv(aTask)
+    print("rsltEnv:", rsltEnv)
+    if rsltEnv['status']==False:
+        print("rsltEnv failed")
+        return False
+    rsltImg = image.make(aTask, rsltEnv['result'], rmImgQ=False)
+    print("rsltImg:", rsltImg)
+    aTask["dirCommonCore"] = rsltEnv['result']['dirRepo']
+    aTask["loadFromImgOn"] = True if os.environ.get("loadFromImgOn").lower()=="true" else False
+    aTask["img"] = rsltImg['result']
+    if rsltImg['status']==False:
+        print("rsltImg failed")
+        return False
+    # print("aTask:", aTask)
+    # sys.exit(0)
+    task.run(aTask)
