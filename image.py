@@ -11,6 +11,7 @@ import sys
 import json
 import subprocess
 from subprocess import TimeoutExpired
+import util
 
 ###############################################################################
 # Support functions
@@ -28,15 +29,6 @@ def mkArgs(dirs):
     }
 
     return result
-
-#######################################
-#
-#######################################
-def toStr(data):
-    if sys.platform == 'linux':
-        return json.dumps(json.dumps(data, separators=(',', ':')))
-
-    return json.dumps(data, separators=(',', ':'))
 
 ###############################################################################
 # Main logic
@@ -65,7 +57,7 @@ def make(aTask, dirs, rmImgQ=True):
             os.environ.get("wolframscript"),
             "-script",
             os.environ.get("mkImg"),
-            toStr(args)],
+            util.toStr(args)],
             timeout=int(os.environ.get("mkImgTime")), check=True
         )
     except subprocess.CalledProcessError as err:
