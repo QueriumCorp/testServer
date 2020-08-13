@@ -31,13 +31,16 @@ dbConn.getFields('testPath')
 Print[$ProcessID, " - - - - - - - - - - - - - - - - - - - - - - - - - "];
 Print[$ProcessID, " START - testing: ", DateString[]];
 (*Print["Print[$CommandLine]: ", $ScriptCommandLine];*)
+(* Print["$ScriptCommandLine[[2]]: ", FullForm[$ScriptCommandLine[[2]]]] *)
 
 (*** Read JSON argument ***)
 $testTask = ImportString[$ScriptCommandLine[[2]], "RawJSON"];
 If[Head[$testTask]=!=Association,
+  Print[$ProcessID, "Failed to convert JSON in String to Association"]
   Exit[6];
 ];
-(* Scan[Print[#, ": ", $testTask[#]]&, Keys[$testTask]]; *)
+(* Scan[Print[#, "->", $testTask[#]]&, Keys[$testTask]]; *)
+(* Print["$testTask:", $testTask] *)
 (* Exit[7]; *)
 
 (*** Verify the directories exist ***)
@@ -62,7 +65,11 @@ If[TrueQ[$testTask["loadFromImgOn"]],
   << StepWise.m;
 ];
 
-(*** Update cache_mma ***)
+(*** Configure global settings ***)
+(* StepWise`$$InTesting$$ = $testTask["inTesting"] - inTesting should come from testPath *)
+StepWise`$$InTesting$$ = True
+
+(*** Update the testPath table ***)
 Get[FileNameJoin[{$testTask["dirCommonCore"], "include", "mysqlConn.m"}]];
 dbStatus = StepWise`modTestPath[$testTask["id"],
   {"host", "pid", "status", "started"},
@@ -76,16 +83,16 @@ Print[$ProcessID, " Updated the host, pid, status, started fields in testPath"];
 (* Exit[0]; *)
 
 (*** Run testing ***)
-(* testRslt = StepWise`runTestTask[$testTask]; *)
-(* Scan[Print[$ProcessID, " ", #, ": ", testRslt[#]]&, Keys[testRslt]]; *)
+testRslt = StepWise`runTestTask[$testTask];
+Scan[Print[$ProcessID, " ", #, ": ", testRslt[#]]&, Keys[testRslt]];
 
 (*** Update the result in the testPath table ***)
-(* testRslt["finished"] = DateString["ISODateTime"]; *)
-(* dbStatus = StepWise`uploadTestResult[$testTask, testRslt]; *)
-(* If[dbStatus =!= 1,
+testRslt["finished"] = DateString["ISODateTime"];
+dbStatus = StepWise`uploadTestResult[$testTask, testRslt];
+If[dbStatus =!= 1,
   Print[$ProcessID, " Failed to upload the result in the testPath table"];
   Exit[7];
-]; *)
+];
 
 Print[$ProcessID, " END - testing: ", DateString[]];
 Exit[];
