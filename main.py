@@ -188,6 +188,11 @@ def aProcess(lock):
         lock.release()
 
     if runTestingQ==True:
+        ## Add some environment variables into a task
+        aTask["dirCommonCore"] = env['result']['dirRepo']
+        aTask["loadFromImgOn"] = True if os.environ.get("loadFromImgOn").lower()=="true" else False
+        aTask["img"] = img['result']
+
         logging.info(f"{os.getpid()}: running the test code!")
         task.run(aTask)
         time.sleep(5)
@@ -204,8 +209,8 @@ if __name__ == '__main__':
     # test.repo()
     # test.allDir()
     # test.mkImg()
-    test.runTask()
-    sys.exit(0)
+    # test.runTask()
+    # sys.exit(0)
 
     ### init the environment
     init()

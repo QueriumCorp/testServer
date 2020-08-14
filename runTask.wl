@@ -39,9 +39,6 @@ If[Head[$testTask]=!=Association,
   Print[$ProcessID, "Failed to convert JSON in String to Association"]
   Exit[6];
 ];
-(* Scan[Print[#, "->", $testTask[#]]&, Keys[$testTask]]; *)
-(* Print["$testTask:", $testTask] *)
-(* Exit[7]; *)
 
 (*** Verify the directories exist ***)
 If[!DirectoryQ[$testTask["dirCommonCore"]],
@@ -80,11 +77,10 @@ If[dbStatus =!= 1,
   Exit[7];
 ];
 Print[$ProcessID, " Updated the host, pid, status, started fields in testPath"];
-(* Exit[0]; *)
 
 (*** Run testing ***)
 testRslt = StepWise`runTestTask[$testTask];
-Scan[Print[$ProcessID, " ", #, ": ", testRslt[#]]&, Keys[testRslt]];
+(* Scan[Print[$ProcessID, " ", #, ": ", testRslt[#]]&, Keys[testRslt]]; *)
 
 (*** Update the result in the testPath table ***)
 testRslt["finished"] = DateString["ISODateTime"];
