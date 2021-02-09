@@ -41,10 +41,13 @@ def checkoutRef(repo, aRef):
     refBranch = str(math.ceil(time.time()))
     ## Create a branch for a new reference
     newBranch = repo.create_head(refBranch, aRef)
-    logging.info(f"{os.getpid()}: Created a branch: {refBranch}")
+    logging.info("{pid}: Created a branch: {refBranch}".format(
+        pid=os.getpid(), refBranch=refBranch))
     ## Checking out the branch that points to the given reference
     repo.heads[refBranch].checkout()
-    logging.info(f"{os.getpid()}: Checkout the branch for the ref - {aRef}")
+    logging.info("{pid}: Checkout the branch for the ref - {aRef}".format(
+        pid=os.getpid(), aRef=aRef
+    ))
     assert repo.active_branch.commit.hexsha == aRef
 
 #######################################
@@ -72,24 +75,29 @@ def mkEnv(task):
     ## Create a root directory for the repo and image
     dirs = mkAllDir(task)
 
+    pid = os.getpid()
     try:
         ## If the repo doesn't exist, clone it
         if not os.path.isdir(
             os.path.join(dirs["dirRepo"], ".git")):
-            logging.debug(f"{os.getpid()}: Cloning a repo .....")
+            logging.debug("{pid}: Cloning a repo .....".format(pid=pid))
             cloneRepo(dirs["dirRepo"], task)
         ## Make sure the repo reference is the same as task['gitHash']
         aRepo = git.Repo(dirs["dirRepo"])
         if aRepo.active_branch.commit.hexsha!=task['gitHash']:
             checkoutRef(aRepo, task['gitHash'])
     except git.GitCommandError as err:
-        logging.warning(f"{os.getpid()}: Invalid branch - {task['gitBranch']}")
+        logging.warning("{pid}: Invalid branch - {branch}".format(
+            pid=pid, branch=task['gitBranch']
+        ))
         return {
             "status": False,
             "result": "Invalid gitBranch"
         }
     except git.BadName as err:
-        logging.warning(f"{os.getpid()}: Invalid ref - {task['gitHash']}")
+        logging.warning("{pid}: Invalid ref - {hash}".format(
+            pid=pid, hash=task['gitHash']
+        ))
         return {
             "status": False,
             "result": "Invalid gitHash"

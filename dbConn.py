@@ -204,6 +204,6 @@ def modMultiVals(tbl, colsCond, valsCond, cols, vals, fltr=""):
     sqlCond = "=%s AND ".join(colsCond)+"=%s "
     sql = "UPDATE {tbl} SET {sqlSet} WHERE {sqlCond} {fltr};".format(
         tbl=tbl, sqlSet=sqlSet, sqlCond=sqlCond, fltr=fltr)
-    logging.debug("modTbl - sql: {sql}".format(sql=sql))
+    logging.debug("modMultiVals - sql: {sql}".format(sql=sql))
 
     exec(sql, cmd="commit", vals=tuple(vals + valsCond))

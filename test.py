@@ -43,7 +43,7 @@ def taskNext():
 
 def repoDir():
     aTask = task.next()
-    result = repo.mkAllDir(aTask)
+    result = gitRepo.mkAllDir(aTask)
     print(result)
 
 

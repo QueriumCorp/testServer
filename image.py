@@ -36,16 +36,16 @@ def mkArgs(dirs):
 def make(aTask, dirs, rmImgQ=True):
     ## Arguments to mkImg
     args = mkArgs(dirs)
-    logging.debug(f"args: {args}")
+    logging.debug("args: {}".format(args))
 
     ## If an old image is present, delete it
     if rmImgQ and os.path.isfile(args['img']):
         os.remove(args['img'])
-        logging.info(f"Removed an old image: {args['img']}")
+        logging.info("Removed an old image: {}".format(args['img']))
 
     ## No need to create a new image case
     if rmImgQ==False and os.path.isfile(args['img']):
-        logging.info(f"StepWise image already exists: {args['img']}")
+        logging.info("StepWise image already exists: {}".format(args['img']))
         return {
             "status": True,
             "result": args['img']

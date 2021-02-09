@@ -63,10 +63,10 @@ def manageDead():
     deadList = []
     for i in range(len(PROCESSES)):
         if not PROCESSES[i].is_alive():
-            logging.debug(f"PROCESS is DEAD: {i}")
+            logging.debug("PROCESS is DEAD: {}".format(i))
             deadList.append(i)
         else:
-            logging.debug(f"PROCESS is ALIVE: {i}")
+            logging.debug("PROCESS is ALIVE: {}".format(i))
     ## Pop the dead PROCESSES in the descending order by their index:
     ## largest to smallest index, Otherwise, running processes can get popped
     deadList.sort(reverse=True)
@@ -81,7 +81,7 @@ def gotLicenseQ():
     ## Verify the test script
     testFile = os.path.join(os.getcwd(), "testScript.wl")
     if not os.path.isfile(testFile):
-        logging.warning(f"Missing: {testFile}")
+        logging.warning("Missing: {}".format(testFile))
 
     ## Run wolframScript to test Mathematica license availability
     try:
@@ -105,7 +105,7 @@ def gotLicenseQ():
 #######################################
 def gotPendingTaskQ(status="pending"):
 
-    logging.info(f"{os.getpid()}: gotPendingTask")
+    logging.info("{}: gotPendingTask".format(os.getpid()))
     time.sleep(5)
     return []
 
@@ -137,7 +137,7 @@ def startProcQ():
     return True
 
 def aProcess(lock):
-    logging.info(f"{os.getpid()}: Starting a process")
+    logging.info("{}: Starting a process".format(os.getpid()))
 
     runTestingQ = True
     lock.acquire()
@@ -173,16 +173,18 @@ def aProcess(lock):
 
     except SystemExit as e:
         if e.code == EXITCODE_NOMMA:
-            logging.warning(f"{os.getpid()}: No pending task")
+            logging.warning("{}: No pending task".format(os.getpid()))
         if e.code == EXITCODE_NOLICENSE:
-            logging.warning(f"{os.getpid()}: No Mathematica license")
+            logging.warning("{}: No Mathematica license".format(os.getpid()))
         if e.code == EXITCODE_IMGFAIL:
-            logging.warning(f"{os.getpid()}: Failed on making a StepWise image")
+            logging.warning("{}: Failed on making a StepWise image".format(
+                os.getpid()
+            ))
         if e.code == EXITCODE_REPOFAIL:
             logging.warning(
-                f"{os.getpid()}: Failed on cloning the CommonCore repo")
+                "{}: Failed on cloning the CommonCore repo".format(os.getpid()))
         if e.code == EXITCODE_BADMAINPATH:
-            logging.warning(f"{os.getpid()}: Invalid main path")
+            logging.warning("{}: Invalid main path".format(os.getpid()))
         runTestingQ = False
     finally:
         lock.release()
@@ -193,7 +195,7 @@ def aProcess(lock):
         aTask["loadFromImgOn"] = True if os.environ.get("loadFromImgOn").lower()=="true" else False
         aTask["img"] = img['result']
 
-        logging.info(f"{os.getpid()}: running the test code!")
+        logging.info("{}: running the test code!".format(os.getpid()))
         task.run(aTask)
         time.sleep(5)
 
@@ -204,10 +206,11 @@ def aProcess(lock):
 if __name__ == '__main__':
 
     ### testing code
-    test.taskNext()
+    # test.taskNext()
     # test.modMultiVals()
     # test.repoDir()
-    # test.repo()
+    test.repo()
+
     # test.allDir()
     # test.mkImg()
     # test.runTask()
