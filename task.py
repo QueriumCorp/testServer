@@ -12,7 +12,7 @@ import subprocess
 from subprocess import TimeoutExpired
 import util
 import sys
-import socket
+
 
 def next(statusCurr="pending", statusNext="acquired", queryAdd="LIMIT 1"):
     tbl = "testPath"
@@ -23,16 +23,17 @@ def next(statusCurr="pending", statusNext="acquired", queryAdd="LIMIT 1"):
         colsRtrn, queryAdd)
     ## If no pending task return {}
     if rslt==None or len(rslt)<1:
-        return {}
+        return []
     ## Make a dictionary of the result
-    rslt = dbConn.mkObj(colsRtrn, rslt)
+    rslt = dbConn.mkObj(colsRtrn, rslt[0])
+    logging.debug("task-next id: {}".format(rslt["id"]))
 
     ## Update status and started fields
     dbConn.modMultiVals(
         tbl,
         ["id"], [rslt["id"]],
         ["status", "host", "pid"],
-        [statusNext, socket.gethostbyname(socket.gethostname()), os.getpid()]
+        [statusNext, os.environ.get('serverHost'), os.getpid()]
     )
     return rslt
 
