@@ -2,8 +2,17 @@
 # test.py
 # Testing module
 ###############################################################################
+from dotenv import load_dotenv
+load_dotenv()
 from datetime import datetime
 import dbConn
+import logging
+import os
+import subprocess
+from subprocess import TimeoutExpired
+import util
+import sys
+import socket
 
 def next(statusCurr="pending", statusNext="acquired", queryAdd="LIMIT 1"):
     tbl = "testPath"
@@ -22,6 +31,35 @@ def next(statusCurr="pending", statusNext="acquired", queryAdd="LIMIT 1"):
     dbConn.modMultiVals(
         tbl,
         ["id"], [rslt["id"]],
-        ["status"], [statusNext]
+        ["status", "host", "pid"],
+        [statusNext, socket.gethostbyname(socket.gethostname()), os.getpid()]
     )
     return rslt
+
+def run(aTask):
+    logging.debug('run tasks')
+    logging.debug(aTask)
+
+    ## Remove some fields
+    for f in ['started', 'finished']:
+        aTask.pop(f)
+
+    ## Run the testing script on a task
+    try:
+        subprocess.run([
+            os.environ.get("wolframscript"),
+            "-script",
+            os.environ.get("runTask"),
+            util.toStr(aTask)],
+            timeout=int(os.environ.get("runTaskTime")), check=True
+        )
+    except subprocess.CalledProcessError as err:
+        return {
+            "status": False,
+            "result": "Error from runTask.wl"
+        }
+    except TimeoutExpired as err:
+        return {
+            "status": False,
+            "result": "runTask.wl didn't end in time"
+        }
