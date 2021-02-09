@@ -3,15 +3,15 @@
 # Install the following module
 # python3 -m pip install gitpython
 ###############################################################################
+import util
+from subprocess import TimeoutExpired
+import subprocess
+import json
+import sys
+import os
+import logging
 from dotenv import load_dotenv
 load_dotenv()
-import logging
-import os
-import sys
-import json
-import subprocess
-from subprocess import TimeoutExpired
-import util
 
 ###############################################################################
 # Support functions
@@ -20,38 +20,46 @@ import util
 #######################################
 # Generate arguments
 #######################################
+
+
 def mkArgs(dirs):
     argInTesting = os.environ.get("InTesting").lower()
     result = {
         "dirCommonCore": dirs['dirRepo'],
         "img": os.path.join(dirs['dirImg'], os.environ.get("fileImg")),
-        "InTesting": True if argInTesting=="true" else False,
+        "InTesting": True if argInTesting == "true" else False,
     }
 
     return result
+
 
 ###############################################################################
 # Main logic
 ###############################################################################
 def make(aTask, dirs, rmImgQ=True):
-    ## Arguments to mkImg
+    # Arguments to mkImg
     args = mkArgs(dirs)
     logging.debug("args: {}".format(args))
 
-    ## If an old image is present, delete it
+    # If an old image is present, delete it
     if rmImgQ and os.path.isfile(args['img']):
         os.remove(args['img'])
         logging.info("Removed an old image: {}".format(args['img']))
 
-    ## No need to create a new image case
-    if rmImgQ==False and os.path.isfile(args['img']):
-        logging.info("StepWise image already exists: {}".format(args['img']))
-        return {
-            "status": True,
-            "result": args['img']
-        }
+    # No need to create a new image case
+    if rmImgQ == False:
+        if util.fileGotDataQ(args['img']):
+            logging.info(
+                "StepWise image already exists: {}".format(args['img']))
+            return {
+                "status": True,
+                "result": args['img']
+            }
+        else:
+            logging.error(
+                "Recreating the image due to missing or invalid image: {}".format(args['img']))
 
-    ## Run the imaging script to generate a StepWise image
+    # Run the imaging script to generate a StepWise image
     try:
         subprocess.run([
             os.environ.get("wolframscript"),
@@ -71,14 +79,14 @@ def make(aTask, dirs, rmImgQ=True):
             "result": "Timeout error in making image"
         }
 
-    ## Verify the StepWise image was generated
-    if not os.path.isfile(args['img']):
+    # Verify the StepWise image was generated
+    if util.fileGotDataQ(args['img']):
         return {
-            "status": False,
-            "result": "Failed to make a StepWise image"
+            "status": True,
+            "result": args['img']
         }
 
     return {
-        "status": True,
-        "result": args['img']
+        "status": False,
+        "result": "Failed to make a StepWise image"
     }

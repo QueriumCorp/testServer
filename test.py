@@ -71,7 +71,7 @@ def mkImg():
     # dirs = gitRepo.mkAllDir(aTask)
     rsltEnv = gitRepo.mkEnv(aTask)
     if rsltEnv['status'] == True:
-        rsltImg = image.make(aTask, rsltEnv['result'])
+        rsltImg = image.make(aTask, rsltEnv['result'], rmImgQ=False)
         print(rsltImg)
         if rsltImg['status'] == False:
             dbConn.modMultiVals(
