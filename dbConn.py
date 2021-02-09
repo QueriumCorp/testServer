@@ -199,11 +199,11 @@ def modTbl(tbl, colsCond, valsCond, col, val):
 
     exec(sql, cmd="commit", vals=tuple(valsCond))
 
-def modMultiVals(tbl, colsCond, valsCond, cols, vals):
+def modMultiVals(tbl, colsCond, valsCond, cols, vals, fltr=""):
     sqlSet = "=%s,".join(cols)+"=%s"
     sqlCond = "=%s AND ".join(colsCond)+"=%s "
-    sql = "UPDATE {tbl} SET {sqlSet} WHERE {sqlCond};".format(
-        tbl=tbl, sqlSet=sqlSet, sqlCond=sqlCond)
+    sql = "UPDATE {tbl} SET {sqlSet} WHERE {sqlCond} {fltr};".format(
+        tbl=tbl, sqlSet=sqlSet, sqlCond=sqlCond, fltr=fltr)
     logging.debug("modTbl - sql: {sql}".format(sql=sql))
 
     exec(sql, cmd="commit", vals=tuple(vals + valsCond))
