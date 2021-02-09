@@ -209,10 +209,10 @@ if __name__ == '__main__':
     # test.taskNext()
     # test.modMultiVals()
     # test.repoDir()
-    test.repo()
-
+    # test.repo()
     # test.allDir()
-    # test.mkImg()
+    test.mkImg()
+
     # test.runTask()
     sys.exit(0)
 
