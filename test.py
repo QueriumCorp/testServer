@@ -34,6 +34,7 @@ def helloWorld():
 
 def taskNext():
     print("taskNext")
+    # data = task.next(taskId=28)
     data = task.next()
     print("status:", data["status"])
     print("host:", data["host"])
@@ -82,12 +83,18 @@ def mkImg():
 
 
 def runTask():
+    taskId = 32
+    # Update the branch and git hash of a task to be tested.
+    # CommonCore repo has a runTask branch
     dbConn.modMultiVals(
         'testPath',
-        ['id'], [49],
-        ['status'], ['pending']
+        ['id'], [taskId],
+        ['gitBranch', 'gitHash'],
+        ['runTask', 'c17a2c00de826b2cef7718b35828fd373a00b348']
     )
-    aTask = task.next()
+
+    # Get the task for testing
+    aTask = task.next(taskId=taskId)
     rsltEnv = gitRepo.mkEnv(aTask)
     print("rsltEnv:", rsltEnv)
     if rsltEnv['status'] == False:

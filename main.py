@@ -211,9 +211,8 @@ if __name__ == '__main__':
     # test.repoDir()
     # test.repo()
     # test.allDir()
-    test.mkImg()
-
-    # test.runTask()
+    # test.mkImg()
+    test.runTask()
     sys.exit(0)
 
     ### init the environment

@@ -13,32 +13,52 @@ from datetime import datetime
 from dotenv import load_dotenv
 load_dotenv()
 
+#######################################
 # To prevent multiple testServers acquiring the same task, change
 # status, host, and pid fields to "acquired", serverHost, and process ID,
 # respectively. Then get the task
-
-
-def next(statusCurr="pending", statusNext="acquired", queryAdd="LIMIT 1"):
+# parameters:
+# taskId: return a given task ID
+#######################################
+def next(
+    statusCurr="pending", statusNext="acquired", taskId=0, queryAdd="LIMIT 1"):
     tbl = "testPath"
 
     # Update status and started fields
     pid = os.getpid()
-    dbConn.modMultiVals(
-        tbl,
-        ["status"], [statusCurr],
-        ["status", "host", "pid"],
-        [statusNext, os.environ.get('serverHost'), pid],
-        fltr="LIMIT 1"
-    )
-    logging.debug("task-next: before fetching a task, update a task with {status} status, {host} host, and {pid} pid".format(status=statusNext, host=os.environ.get('serverHost'), pid=pid))
+    if taskId>0:
+        dbConn.modMultiVals(
+            tbl,
+            ["id"], [taskId],
+            ["status", "host", "pid"],
+            [statusNext, os.environ.get('serverHost'), pid],
+            fltr="LIMIT 1"
+        )
+    else:
+        dbConn.modMultiVals(
+            tbl,
+            ["status"], [statusCurr],
+            ["status", "host", "pid"],
+            [statusNext, os.environ.get('serverHost'), pid],
+            fltr="LIMIT 1"
+        )
+    logging.debug("task-next: before fetching a task, update a task with {status} status, {host} host, and {pid} pid".format(
+        status=statusNext, host=os.environ.get('serverHost'), pid=pid))
 
     # Get the task
     colsRtrn = dbConn.getFields("testPath")
-    rslt = dbConn.getRow(
-        tbl,
-        ["status", "host", "pid"],
-        [statusNext, os.environ.get('serverHost'), pid],
-        colsRtrn, queryAdd)
+    if taskId > 0:
+        rslt = dbConn.getRow(
+            tbl,
+            ["id"],[taskId],
+            colsRtrn, queryAdd)
+    else:
+        rslt = dbConn.getRow(
+            tbl,
+            ["status", "host", "pid"],
+            [statusNext, os.environ.get('serverHost'), pid],
+            colsRtrn, queryAdd)
+
     # If no pending task return {}
     if rslt == None or len(rslt) < 1:
         return []
@@ -50,6 +70,10 @@ def next(statusCurr="pending", statusNext="acquired", queryAdd="LIMIT 1"):
     return rslt
 
 
+#######################################
+# Run a test task
+# parameters:
+#######################################
 def run(aTask):
     logging.debug('run tasks')
     logging.debug(aTask)

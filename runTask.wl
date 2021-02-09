@@ -69,14 +69,14 @@ StepWise`$$InTesting$$ = True
 (*** Update the testPath table ***)
 Get[FileNameJoin[{$testTask["dirCommonCore"], "include", "mysqlConn.m"}]];
 dbStatus = StepWise`modTestPath[$testTask["id"],
-  {"host", "pid", "status", "started"},
-  {$MachineAddresses[[-1]], $ProcessID, "running", DateString["ISODateTime"]}
+  {"pid", "status", "started"},
+  {$ProcessID, "running", DateString["ISODateTime"]}
 ];
 If[dbStatus =!= 1,
   Print[$ProcessID, " Failed to update testPath with pid, status, started"];
   Exit[7];
 ];
-Print[$ProcessID, " Updated the host, pid, status, started fields in testPath"];
+Print[$ProcessID, " Updated the pid, status, and started fields in testPath"];
 
 (*** Run testing ***)
 testRslt = StepWise`runTestTask[$testTask];
