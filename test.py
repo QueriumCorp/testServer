@@ -90,7 +90,7 @@ def runTask():
         'testPath',
         ['id'], [taskId],
         ['gitBranch', 'gitHash'],
-        ['runTask', 'af22c2a2ac069f9beefa61bdf21c9555c5badb17']
+        ['runTask', 'c17a2c00de826b2cef7718b35828fd373a00b348']
     )
 
     # Get the task for testing
