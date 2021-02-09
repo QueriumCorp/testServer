@@ -204,13 +204,14 @@ def aProcess(lock):
 if __name__ == '__main__':
 
     ### testing code
-    # test.taskNext()
+    test.taskNext()
+    # test.modMultiVals()
     # test.repoDir()
     # test.repo()
     # test.allDir()
     # test.mkImg()
     # test.runTask()
-    # sys.exit(0)
+    sys.exit(0)
 
     ### init the environment
     init()
