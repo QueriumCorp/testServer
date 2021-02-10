@@ -41,8 +41,7 @@ def getFields(tbl):
             "ruleMatchTimeOutTime", "msg", "jiraResp", "started", "finished", "created"
         ],
         "testPath": [
-            "name", "question_id", "path_id", "trace_id", "diff_id", "author",
-            "gradeStyle", "policies", "status", "ref_id", "priority",
+            "id","name", "question_id", "path_id", "trace_id", "diff_id", "author","gradeStyle", "policies", "status", "ref_id", "priority",
             "limitPathTime", "pid", "stepCount", "stepsCompleted", "timeCompleted", "host", "gitBranch", "gitHash", "mmaVersion", "timeOutTime", "ruleMatchTimeOutTime", "msg", "started", "finished"
         ]
     }
