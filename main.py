@@ -206,6 +206,7 @@ def aProcess(lock):
 if __name__ == '__main__':
 
     ### testing code
+    # test.modByPriority()
     # test.taskNext()
     # test.modMultiVals()
     # test.repoDir()

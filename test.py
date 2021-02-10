@@ -12,6 +12,18 @@ from dotenv import load_dotenv
 load_dotenv()
 import socket
 
+def modByPriority():
+    tbl = "testPath"
+    status = "acquired"
+    host = "testHost"
+    pid = os.getpid()
+    dbConn.modMultiVals(
+        tbl,
+        ["status"], ["pending"],
+        ["status", "host", "pid"],
+        [status, host, pid],
+        fltr="ORDER BY priority DESC LIMIT 1"
+    )
 
 def modMultiVals():
     tbl = "testPath"
@@ -83,18 +95,19 @@ def mkImg():
 
 
 def runTask():
-    taskId = 32
+    # taskId = 32
     # Update the branch and git hash of a task to be tested.
     # CommonCore repo has a runTask branch
-    dbConn.modMultiVals(
-        'testPath',
-        ['id'], [taskId],
-        ['gitBranch', 'gitHash'],
-        ['runTask', 'c17a2c00de826b2cef7718b35828fd373a00b348']
-    )
+    # dbConn.modMultiVals(
+    #     'testPath',
+    #     ['id'], [taskId],
+    #     ['gitBranch', 'gitHash'],
+    #     ['runTask', 'c17a2c00de826b2cef7718b35828fd373a00b348']
+    # )
 
     # Get the task for testing
-    aTask = task.next(taskId=taskId)
+    # aTask = task.next(taskId=taskId)
+    aTask = task.next()
     rsltEnv = gitRepo.mkEnv(aTask)
     print("rsltEnv:", rsltEnv)
     if rsltEnv['status'] == False:
