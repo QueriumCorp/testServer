@@ -61,7 +61,7 @@ def next(
 
     # If no pending task return {}
     if rslt == None or len(rslt) < 1:
-        return []
+        return {}
 
     # Make a dictionary of the result
     rslt = dbConn.mkObj(colsRtrn, rslt[0])
