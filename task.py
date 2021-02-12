@@ -40,10 +40,8 @@ def next(
             ["status"], [statusCurr],
             ["status", "host", "pid"],
             [statusNext, os.environ.get('serverHost'), pid],
-            fltr="LIMIT 1"
+            fltr="ORDER BY priority DESC LIMIT 1"
         )
-    logging.debug("task-next: before fetching a task, update a task with {status} status, {host} host, and {pid} pid".format(
-        status=statusNext, host=os.environ.get('serverHost'), pid=pid))
 
     # Get the task
     colsRtrn = dbConn.getFields("testPath")
