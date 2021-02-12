@@ -36,31 +36,31 @@ Print[$ProcessID, " START: making StepWise image: ", DateString[]];
 (*Print["Print[$CommandLine]: ", $ScriptCommandLine];*)
 
 (*** Read JSON argument ***)
-Global`$confCache = ImportString[$ScriptCommandLine[[2]], "RawJSON"];
-Scan[Print[#, ": ", Global`$confCache[#]]&, Keys[Global`$confCache]];
+Global`$confTesting = ImportString[$ScriptCommandLine[[2]], "RawJSON"];
+Scan[Print[#, ": ", Global`$confTesting[#]]&, Keys[Global`$confTesting]];
 
 (*** Verify the directories exist ***)
-If[!DirectoryQ[Global`$confCache["dirCommonCore"]],
+If[!DirectoryQ[Global`$confTesting["dirCommonCore"]],
   Print[
     $ProcessID,
-    " Invalid dir: ", Global`$confCache["dirCommonCore"]
+    " Invalid dir: ", Global`$confTesting["dirCommonCore"]
   ];
   Exit[4];
 ];
 
 (*** Load Stepwise ***)
-SetDirectory[Global`$confCache["dirCommonCore"]];
+SetDirectory[Global`$confTesting["dirCommonCore"]];
 Print[$ProcessID, " Loading StepWise ....."];
 << StepWise.m;
 
 (*** configure stepwise settings ***)
 Print[$ProcessID, " Configuring StepWise variables ....."];
-StepWise`$$InTesting$$ = Global`$confCache["InTesting"];
+StepWise`$$InTesting$$ = Global`$confTesting["InTesting"];
 
 (*** Create cache image ***)
 Print[$ProcessID, " Creating a new StepWise image ....."];
 Share[];
-DumpSave[Global`$confCache["img"],
+DumpSave[Global`$confTesting["img"],
   {
     "parserMain`", "unitFactor`", "parserDefault`", "parserUnit`",
     "common`", "configParser`", "qccNqA1UntTbls`", "StepWise`", "Global`",
