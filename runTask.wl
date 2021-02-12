@@ -28,6 +28,37 @@ dbConn.getFields('testPath')
 * Run the script on Evan's mac:
   /Applications/Mathematica.app/Contents/MacOS/WolframScript -script /Users/evan/Documents/work/querium/coding/python/testServer/runTask.wl '{"dirCommonCore": "/tmp/stepwise/28746af9688a13aca6084ba8a1833b9f5a682601/CommonCore", "img": "/tmp/stepwise/28746af9688a13aca6084ba8a1833b9f5a682601/images/cacheImg.mx", "loadFromImgOn": true}'
 *******************************************************************************)
+
+(*** Upload the result ***)
+uploadTestResult[aTask_Association, data_Association] :=
+    Module[{tbl="testPath", dataToDb=<||>, flds, vals={}, tmp={}},
+      (** Get valid fields of the tbl **)
+      flds=StepWise`getAttrOf[tbl];
+
+      (** Update dataToDb with data **)
+      If[MemberQ[flds, #], dataToDb[#]=data[#]]& /@Keys[data];
+
+      If[TrueQ[data["status"]],
+        dataToDb["status"] = "success";
+        (** Make sure the keys in data are valid ones for testPath **)
+        (If[MemberQ[flds, #], dataToDb[#]=data["result"][#]])&
+            /@Keys[data["result"]];
+        ,
+        dataToDb["status"] = "fail";
+        dataToDb["msg"] = If[StringQ[data["result"]], data["result"], ""];
+      ];
+
+      (** Round up float to integer **)
+      If[KeyExistsQ[dataToDb, "timeCompleted"],
+        dataToDb["timeCompleted"] = Ceiling[dataToDb["timeCompleted"]]];
+
+      (** Update the testPath table **)
+      mysqlConn`mysqlUpdateTblMult[
+        StepWise`getDbConn[],
+        tbl, "id", aTask["id"], Keys[dataToDb], Values[dataToDb]]
+    ];
+
+(*** Main Logic ***)
 Print[$ProcessID, " - - - - - - - - - - - - - - - - - - - - - - - - - "];
 Print[$ProcessID, " START - testing: ", DateString[]];
 (*Print["Print[$CommandLine]: ", $ScriptCommandLine];*)
@@ -84,7 +115,7 @@ testRslt = StepWise`runTestTask[$testTask];
 
 (*** Update the result in the testPath table ***)
 testRslt["finished"] = DateString["ISODateTime"];
-dbStatus = StepWise`uploadTestResult[$testTask, testRslt];
+dbStatus = uploadTestResult[$testTask, testRslt];
 If[dbStatus =!= 1,
   Print[$ProcessID, " Failed to upload the result in the testPath table"];
   Exit[7];
