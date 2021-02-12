@@ -12,6 +12,18 @@ from dotenv import load_dotenv
 load_dotenv()
 import socket
 
+def modByPriority():
+    tbl = "testPath"
+    status = "acquired"
+    host = "testHost"
+    pid = os.getpid()
+    dbConn.modMultiVals(
+        tbl,
+        ["status"], ["pending"],
+        ["status", "host", "pid"],
+        [status, host, pid],
+        fltr="ORDER BY priority DESC LIMIT 1"
+    )
 
 def modMultiVals():
     tbl = "testPath"
@@ -96,6 +108,7 @@ def runTask():
     # Get the task for testing
     # aTask = task.next(taskId=taskId)
     aTask = task.next()
+
     if len(aTask) < 1:
         print("No task to test")
         return
