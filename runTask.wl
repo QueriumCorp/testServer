@@ -112,6 +112,13 @@ Print[$ProcessID,
 
 (*** Run testing ***)
 testRslt = StepWise`runTestTask[$testTask];
+If[!AssociationQ[testRslt],
+  testRslt = <|
+    "status"->False,
+    "result"->"CommonCore failed to run the task"
+  |>;
+  Print[$ProcessID, " ", testRslt["result"], ": ", $testTask["id"]];
+];
 
 (*** Update the result in the testPath table ***)
 testRslt["finished"] = DateString["ISODateTime", TimeZone -> 0];
