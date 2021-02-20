@@ -220,7 +220,7 @@ def testing():
 if __name__ == '__main__':
 
     ### testing code
-    # testing()
+    testing()
 
     ### init the environment
     init()
