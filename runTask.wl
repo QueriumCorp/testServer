@@ -60,7 +60,7 @@ uploadTestResult[aTask_Association, data_Association] :=
 
 (*** Main Logic ***)
 Print[$ProcessID, " - - - - - - - - - - - - - - - - - - - - - - - - - "];
-Print[$ProcessID, " START - testing: ", DateString[]];
+Print[$ProcessID, " START - testing: ", DateString["ISODateTime", TimeZone->0]];
 (*Print["Print[$CommandLine]: ", $ScriptCommandLine];*)
 (* Print["$ScriptCommandLine[[2]]: ", FullForm[$ScriptCommandLine[[2]]]] *)
 
@@ -101,25 +101,25 @@ StepWise`$$InTesting$$ = True
 Get[FileNameJoin[{$testTask["dirCommonCore"], "include", "mysqlConn.m"}]];
 dbStatus = StepWise`modTestPath[$testTask["id"],
   {"pid", "status", "started"},
-  {$ProcessID, "running", DateString["ISODateTime"]}
+  {$ProcessID, "running", DateString["ISODateTime", TimeZone -> 0]}
 ];
 If[dbStatus =!= 1,
   Print[$ProcessID, " Failed to update testPath with pid, status, started"];
   Exit[7];
 ];
-Print[$ProcessID, " Updated the pid, status, and started fields in testPath"];
+Print[$ProcessID,
+  " Updated the pid, status, and started fields in testPath: ", aTask["id"]];
 
 (*** Run testing ***)
 testRslt = StepWise`runTestTask[$testTask];
-(* Scan[Print[$ProcessID, " ", #, ": ", testRslt[#]]&, Keys[testRslt]]; *)
 
 (*** Update the result in the testPath table ***)
-testRslt["finished"] = DateString["ISODateTime"];
+testRslt["finished"] = DateString["ISODateTime", TimeZone -> 0];
 dbStatus = uploadTestResult[$testTask, testRslt];
 If[dbStatus =!= 1,
   Print[$ProcessID, " Failed to upload the result in the testPath table"];
   Exit[7];
 ];
 
-Print[$ProcessID, " END - testing: ", DateString[]];
+Print[$ProcessID, " END - testing: ", DateString["ISODateTime", TimeZone -> 0]];
 Exit[];
