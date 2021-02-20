@@ -32,7 +32,9 @@ mkCacheImg expects a string of JSON as an argument and the following fields:
   /Applications/Mathematica.app/Contents/MacOS/WolframScript -script /Users/evan/Documents/work/querium/coding/mma/CommonCore/cronjob/cacheServer/mkCacheImg.wl '{"dirCommonCore": "/Users/evan/Documents/work/querium/coding/mma/CommonCore", "img": "/tmp/images", "cachingOn": true, "jsonResponse": true, "redisOn": true, "saveStateInStateOn": true, "autoCachingOn": true, "redisConnTime": 3}'
 *******************************************************************************)
 Print["- - - - - - - - - - - - - - - - - - - - - - - - - "];
-Print[$ProcessID, " START: making StepWise image: ", DateString[]];
+Print[$ProcessID,
+      " START: making StepWise image: ",
+      DateString["ISODateTime", TimeZone -> 0]];
 (*Print["Print[$CommandLine]: ", $ScriptCommandLine];*)
 
 (*** Read JSON argument ***)
@@ -67,5 +69,7 @@ DumpSave[Global`$confTesting["img"],
     "$Path", "$RecursionLimit"
   }];
 
-Print[$ProcessID, " END: making an image: ", DateString[]];
+Print[$ProcessID,
+      " END: making an image: ",
+      DateString["ISODateTime", TimeZone -> 0]];
 Exit[];
