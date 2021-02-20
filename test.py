@@ -107,8 +107,8 @@ def runTask():
     dbConn.modMultiVals(
         'testPath',
         ['id'], [1],
-        ['status', 'pid', 'gitBranch', 'gitHash', 'trace_id', 'diff_id'],
-        ['pending', '-1', 'dev', 'de32d05ef5622520d84912ca04c18f031309a6a0', '-1', '-1']
+        ['status', 'pid', 'timeCompleted', 'gitBranch', 'gitHash', 'trace_id', 'diff_id'],
+        ['pending', '-1', '-1', 'dev', 'de32d05ef5622520d84912ca04c18f031309a6a0', '-1', '-1']
     )
 
     # Get the task for testing
