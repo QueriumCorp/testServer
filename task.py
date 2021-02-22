@@ -14,6 +14,21 @@ from dotenv import load_dotenv
 load_dotenv()
 
 #######################################
+# Test any pending task
+#######################################
+def taskInStatusQ(status="pending"):
+    tbl = "testPath"
+
+    # Get the ID of a pending task
+    rslt = dbConn.getRow(tbl, ["status"], ["pending"],["id"])
+
+    # If no pending task return False
+    if rslt == None or len(rslt) < 1:
+        return False
+
+    return True
+
+#######################################
 # To prevent multiple testServers acquiring the same task, change
 # status, host, and pid fields to "acquired", serverHost, and process ID,
 # respectively. Then get the task

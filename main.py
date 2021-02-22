@@ -96,7 +96,7 @@ def gotLicenseQ():
         return False
     else:
         if os.environ.get('testResult') not in rslt.decode("utf-8"):
-            logging.info("No license is available")
+            logging.warning("No license is available")
             return False
         else:
             return True
@@ -135,6 +135,11 @@ def startProcQ():
     ## Verify availability of of a Mathematica license
     if not gotLicenseQ():
         logging.debug("Unable to acquire a license")
+        return False
+
+    ## Check if there is any pending tasks in testPath
+    if not task.taskInStatusQ():
+        logging.info("No pending tasks")
         return False
 
     return True
@@ -224,7 +229,7 @@ def testing():
 if __name__ == '__main__':
 
     ### testing code
-    testing()
+    # testing()
 
     ### init the environment
     init()
@@ -248,6 +253,7 @@ if __name__ == '__main__':
             aProc = multiprocessing.Process(target=aProcess, args=(LOCK,))
             PROCESSES.append(aProc)
             aProc.start()
+            # aProc.join()
         except KeyboardInterrupt:
             ### Add cleanup code if needed
             terminateQ = True
