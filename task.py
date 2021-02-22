@@ -89,13 +89,21 @@ def run(aTask):
             util.toStr(aTask)],
             timeout=int(os.environ.get("runTaskTime")), check=True
         )
-    except subprocess.CalledProcessError as err:
-        return {
-            "status": False,
-            "result": "Error from runTask.wl"
-        }
-    except TimeoutExpired as err:
-        return {
-            "status": False,
-            "result": "runTask.wl didn't end in time"
-        }
+    except subprocess.CalledProcessError:
+        msg = "Error from runTask.wl"
+        dbConn.modMultiVals("testPath", ["id"], [aTask["id"]],
+            ["status", "msg"], ["fail", msg])
+        logging.error("Task ID {id} failed: {msg}".format(
+            id=aTask["id"], msg=msg))
+    except TimeoutExpired:
+        msg = "runTask.wl didn't end in time"
+        dbConn.modMultiVals("testPath", ["id"], [aTask["id"]],
+            ["status", "msg"], ["fail", msg])
+        logging.error("Task ID {id} failed: {msg}".format(
+            id=aTask["id"], msg=msg))
+    except:
+        msg = "Unknown error"
+        dbConn.modMultiVals("testPath", ["id"], [aTask["id"]],
+            ["status", "msg"], ["fail", msg])
+        logging.error("Task ID {id} failed: {msg}".format(
+            id=aTask["id"], msg=msg))
