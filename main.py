@@ -40,8 +40,8 @@ EXITCODE_REPOFAIL = 8
 EXITCODE_BADMAINPATH = 9
 EXITCODE_INVALIDREF = 10
 
-# logging.basicConfig(level=logging.DEBUG)
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.DEBUG)
+# logging.basicConfig(level=logging.INFO)
 
 ###############################################################################
 # Support functions
@@ -91,15 +91,17 @@ def gotLicenseQ():
             "-script",
             testFile], timeout=5
         )
-    except subprocess.TimeoutExpired as er:
-        logging.info("testScrip run too long: TimeoutExpired")
+    except subprocess.TimeoutExpired:
+        logging.error("gotLicenseQ: TimeoutExpired")
         return False
+    else:
+        if os.environ.get('testResult') not in rslt.decode("utf-8"):
+            logging.info("No license is available")
+            return False
+        else:
+            return True
 
-    if os.environ.get('testResult') not in rslt.decode("utf-8"):
-        logging.info("No license is available")
-        return False
-
-    return True
+    return False
 
 #######################################
 # Check any pending tasks in testPath
@@ -222,7 +224,7 @@ def testing():
 if __name__ == '__main__':
 
     ### testing code
-    # testing()
+    testing()
 
     ### init the environment
     init()
