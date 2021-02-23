@@ -94,6 +94,9 @@ def gotLicenseQ():
     except subprocess.TimeoutExpired:
         logging.error("gotLicenseQ: TimeoutExpired")
         return False
+    except:
+        logging.error("gotLicenseQ: Unknown error")
+        return False
     else:
         if os.environ.get('testResult') not in rslt.decode("utf-8"):
             logging.warning("No license is available")
@@ -147,6 +150,7 @@ def startProcQ():
 def aProcess(lock):
     logging.info("{}: Starting a process".format(os.getpid()))
 
+    # runTestingQ = True
     lock.acquire()
     try:
         ## Is there a Mathematica license
@@ -174,7 +178,7 @@ def aProcess(lock):
             dbConn.modMultiVals(
                 'testPath',
                 ['id'], [aTask['id']],
-                ['status', 'msg'], ['failed', img['result']]
+                ['status', 'msg'], ['fail', img['result']]
             )
             sys.exit(EXITCODE_IMGFAIL)
 
@@ -192,8 +196,10 @@ def aProcess(lock):
                 "{}: Failed on cloning the CommonCore repo".format(os.getpid()))
         if e.code == EXITCODE_BADMAINPATH:
             logging.error("{}: Invalid main path".format(os.getpid()))
+        # runTestingQ = False
     except:
         logging.error("{}: Unexpected error".format(os.getpid()))
+        # runTestingQ = False
     else:
         ## Add some environment variables into a task
         aTask["dirCommonCore"] = env['result']['dirRepo']
@@ -212,6 +218,7 @@ def aProcess(lock):
 # Testing
 #######################################
 def testing():
+    # print("gotLicenseQ():", gotLicenseQ())
     # test.modByPriority()
     # test.taskNext()
     # test.modMultiVals()
@@ -219,7 +226,8 @@ def testing():
     # test.repo()
     # test.allDir()
     # test.mkImg()
-    test.runTask()
+    # test.runTask()
+    test.modTasks()
 
     sys.exit(0)
 
