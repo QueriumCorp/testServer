@@ -41,6 +41,7 @@ EXITCODE_BADMAINPATH = 9
 EXITCODE_INVALIDREF = 10
 
 logging.basicConfig(level=logging.DEBUG)
+# logging.basicConfig(level=logging.INFO)
 
 ###############################################################################
 # Support functions
@@ -90,15 +91,20 @@ def gotLicenseQ():
             "-script",
             testFile], timeout=5
         )
-    except subprocess.TimeoutExpired as er:
-        logging.info("testScrip run too long: TimeoutExpired")
+    except subprocess.TimeoutExpired:
+        logging.error("gotLicenseQ: TimeoutExpired")
         return False
-
-    if os.environ.get('testResult') not in rslt.decode("utf-8"):
-        logging.info("No license is available")
+    except:
+        logging.error("gotLicenseQ: Unknown error")
         return False
+    else:
+        if os.environ.get('testResult') not in rslt.decode("utf-8"):
+            logging.warning("No license is available")
+            return False
+        else:
+            return True
 
-    return True
+    return False
 
 #######################################
 # Check any pending tasks in testPath
@@ -134,12 +140,17 @@ def startProcQ():
         logging.debug("Unable to acquire a license")
         return False
 
+    ## Check if there is any pending tasks in testPath
+    if not task.taskInStatusQ():
+        logging.info("No pending tasks")
+        return False
+
     return True
 
 def aProcess(lock):
     logging.info("{}: Starting a process".format(os.getpid()))
 
-    runTestingQ = True
+    # runTestingQ = True
     lock.acquire()
     try:
         ## Is there a Mathematica license
@@ -167,42 +178,47 @@ def aProcess(lock):
             dbConn.modMultiVals(
                 'testPath',
                 ['id'], [aTask['id']],
-                ['status', 'msg'], ['failed', img['result']]
+                ['status', 'msg'], ['fail', img['result']]
             )
             sys.exit(EXITCODE_IMGFAIL)
 
     except SystemExit as e:
         if e.code == EXITCODE_NOMMA:
-            logging.warning("{}: No pending task".format(os.getpid()))
+            logging.info("{}: No pending task".format(os.getpid()))
         if e.code == EXITCODE_NOLICENSE:
             logging.warning("{}: No Mathematica license".format(os.getpid()))
         if e.code == EXITCODE_IMGFAIL:
-            logging.warning("{}: Failed on making a StepWise image".format(
+            logging.error("{}: Failed on making a StepWise image".format(
                 os.getpid()
             ))
         if e.code == EXITCODE_REPOFAIL:
-            logging.warning(
+            logging.error(
                 "{}: Failed on cloning the CommonCore repo".format(os.getpid()))
         if e.code == EXITCODE_BADMAINPATH:
-            logging.warning("{}: Invalid main path".format(os.getpid()))
-        runTestingQ = False
+            logging.error("{}: Invalid main path".format(os.getpid()))
+        # runTestingQ = False
+    except:
+        logging.error("{}: Unexpected error".format(os.getpid()))
+        # runTestingQ = False
+    else:
+        ## Add some environment variables into a task
+        aTask["dirCommonCore"] = env['result']['dirRepo']
+        aTask["loadFromImgOn"] = True \
+            if os.environ.get("loadFromImgOn").lower()=="true" else False
+        aTask["img"] = img['result']
+
+        logging.info("{}: running a task in mma .....".format(os.getpid()))
+        task.run(aTask)
+        time.sleep(5)
     finally:
         lock.release()
 
-    if runTestingQ==True:
-        ## Add some environment variables into a task
-        aTask["dirCommonCore"] = env['result']['dirRepo']
-        aTask["loadFromImgOn"] = True if os.environ.get("loadFromImgOn").lower()=="true" else False
-        aTask["img"] = img['result']
-
-        logging.info("{}: running the test code!".format(os.getpid()))
-        task.run(aTask)
-        time.sleep(5)
 
 #######################################
 # Testing
 #######################################
 def testing():
+    # print("gotLicenseQ():", gotLicenseQ())
     # test.modByPriority()
     # test.taskNext()
     # test.modMultiVals()
@@ -210,7 +226,8 @@ def testing():
     # test.repo()
     # test.allDir()
     # test.mkImg()
-    test.runTask()
+    # test.runTask()
+    test.modTasks()
 
     sys.exit(0)
 
@@ -220,7 +237,7 @@ def testing():
 if __name__ == '__main__':
 
     ### testing code
-    testing()
+    # testing()
 
     ### init the environment
     init()
@@ -230,15 +247,24 @@ if __name__ == '__main__':
     ## Number of processes depends on # of available Mathematica licenses
     PROCESSES = []
 
-    while True:
-        ## Kill expired and hang processes
-        killRougeProcesses()
+    terminateQ = False
+    while not terminateQ:
+        try:
+            ## Kill expired and hang processes
+            killRougeProcesses()
 
-        ## Start process if any free license and pending task
-        if not startProcQ():
-            time.sleep(int(os.environ.get('sleepTime')))
-            continue
+            ## Start process if any free license and pending task
+            if not startProcQ():
+                time.sleep(int(os.environ.get('sleepTime')))
+                continue
 
-        aProc = multiprocessing.Process(target=aProcess, args=(LOCK,))
-        PROCESSES.append(aProc)
-        aProc.start()
+            aProc = multiprocessing.Process(target=aProcess, args=(LOCK,))
+            PROCESSES.append(aProc)
+            aProc.start()
+            # aProc.join()
+        except KeyboardInterrupt:
+            ### Add cleanup code if needed
+            terminateQ = True
+        except multiprocessing.ProcessError as err:
+            logging.error(err)
+

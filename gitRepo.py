@@ -63,8 +63,8 @@ def cloneRepo(dir, task):
     assert repo.active_branch.name == task['gitBranch']
 
     ## Make sure the repo and the task is at the same codebase (git Hash)
-    print("repo hash:", repo.active_branch.commit.hexsha)
-    print("task hash:", task['gitHash'])
+    logging.debug("repo hash: {}".format(repo.active_branch.commit.hexsha))
+    logging.debug("task hash: {}".format(task['gitHash']))
     if task['gitHash']!=repo.active_branch.commit.hexsha:
         checkoutRef(repo, task['gitHash'])
 
@@ -86,24 +86,30 @@ def mkEnv(task):
         aRepo = git.Repo(dirs["dirRepo"])
         if aRepo.active_branch.commit.hexsha!=task['gitHash']:
             checkoutRef(aRepo, task['gitHash'])
-    except git.GitCommandError as err:
-        logging.warning("{pid}: Invalid branch - {branch}".format(
+    except git.GitCommandError:
+        logging.error("{pid}: Invalid branch - {branch}".format(
             pid=pid, branch=task['gitBranch']
         ))
         return {
             "status": False,
             "result": "Invalid gitBranch"
         }
-    except git.BadName as err:
-        logging.warning("{pid}: Invalid ref - {hash}".format(
+    except git.BadName:
+        logging.error("{pid}: Invalid ref - {hash}".format(
             pid=pid, hash=task['gitHash']
         ))
         return {
             "status": False,
             "result": "Invalid gitHash"
         }
-
-    return {
-        "status": True,
-        "result": dirs
-    }
+    except:
+        logging.error("{pid}: Some unexpected error".format(pid=pid))
+        return {
+            "status": False,
+            "result": "Unexpected error: gitRepo-mkEnv"
+        }
+    else:
+        return {
+            "status": True,
+            "result": dirs
+        }

@@ -14,6 +14,21 @@ from dotenv import load_dotenv
 load_dotenv()
 
 #######################################
+# Test any pending task
+#######################################
+def taskInStatusQ(status="pending"):
+    tbl = "testPath"
+
+    # Get the ID of a pending task
+    rslt = dbConn.getRow(tbl, ["status"], ["pending"],["id"])
+
+    # If no pending task return False
+    if rslt == None or len(rslt) < 1:
+        return False
+
+    return True
+
+#######################################
 # To prevent multiple testServers acquiring the same task, change
 # status, host, and pid fields to "acquired", serverHost, and process ID,
 # respectively. Then get the task
@@ -67,6 +82,11 @@ def next(
 
     return rslt
 
+#######################################
+# Run a test task
+# parameters:
+#######################################
+
 
 #######################################
 # Run a test task
@@ -87,15 +107,24 @@ def run(aTask):
             "-script",
             os.environ.get("runTask"),
             util.toStr(aTask)],
-            timeout=int(os.environ.get("runTaskTime")), check=True
+            timeout=int(aTask["limitPathTime"])+60,
+            check=True
         )
-    except subprocess.CalledProcessError as err:
-        return {
-            "status": False,
-            "result": "Error from runTask.wl"
-        }
-    except TimeoutExpired as err:
-        return {
-            "status": False,
-            "result": "runTask.wl didn't end in time"
-        }
+    except subprocess.CalledProcessError:
+        msg = "Error from runTask.wl"
+        dbConn.modMultiVals("testPath", ["id"], [aTask["id"]],
+            ["status", "msg"], ["fail", msg])
+        logging.error("Task ID {id} failed: {msg}".format(
+            id=aTask["id"], msg=msg))
+    except TimeoutExpired:
+        msg = "runTask.wl didn't end in time"
+        dbConn.modMultiVals("testPath", ["id"], [aTask["id"]],
+            ["status", "msg"], ["fail", msg])
+        logging.error("Task ID {id} failed: {msg}".format(
+            id=aTask["id"], msg=msg))
+    except:
+        msg = "Unknown error"
+        dbConn.modMultiVals("testPath", ["id"], [aTask["id"]],
+            ["status", "msg"], ["fail", msg])
+        logging.error("Task ID {id} failed: {msg}".format(
+            id=aTask["id"], msg=msg))
