@@ -68,25 +68,25 @@ def make(aTask, dirs, rmImgQ=True):
             util.toStr(args)],
             timeout=int(os.environ.get("mkImgTime")), check=True
         )
-    except subprocess.CalledProcessError as err:
+    except subprocess.CalledProcessError:
         return {
             "status": False,
             "result": "Error from the mkImg script"
         }
-    except TimeoutExpired as err:
+    except TimeoutExpired:
         return {
             "status": False,
             "result": "Timeout error in making image"
         }
+    else:
+        # Verify the StepWise image was generated
+        if util.fileGotDataQ(args['img']):
+            return {
+                "status": True,
+                "result": args['img']
+            }
 
-    # Verify the StepWise image was generated
-    if util.fileGotDataQ(args['img']):
         return {
-            "status": True,
-            "result": args['img']
+            "status": False,
+            "result": "Failed to make a StepWise image"
         }
-
-    return {
-        "status": False,
-        "result": "Failed to make a StepWise image"
-    }

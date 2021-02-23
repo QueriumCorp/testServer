@@ -82,7 +82,7 @@ def gotLicenseQ():
     ## Verify the test script
     testFile = os.path.join(os.getcwd(), "testScript.wl")
     if not os.path.isfile(testFile):
-        logging.warning("Missing: {}".format(testFile))
+        logging.warning("gotLicenseQ - Missing: {}".format(testFile))
 
     ## Run wolframScript to test Mathematica license availability
     try:
@@ -92,14 +92,14 @@ def gotLicenseQ():
             testFile], timeout=5
         )
     except subprocess.TimeoutExpired:
-        logging.error("gotLicenseQ: TimeoutExpired")
+        logging.error("gotLicenseQ - TimeoutExpired")
         return False
     except:
-        logging.error("gotLicenseQ: Unknown error")
+        logging.error("gotLicenseQ - Unknown error")
         return False
     else:
         if os.environ.get('testResult') not in rslt.decode("utf-8"):
-            logging.warning("No license is available")
+            logging.warning("gotLicenseQ - No license is available")
             return False
         else:
             return True
@@ -132,17 +132,17 @@ def startProcQ():
 
     ## Verify not all of the license are used
     if len(PROCESSES)>=int(os.environ.get('licenseLimit')):
-        logging.debug("All licenses are in use")
+        logging.debug("startProcQ - All licenses are in use")
         return False
 
     ## Verify availability of of a Mathematica license
     if not gotLicenseQ():
-        logging.debug("Unable to acquire a license")
+        logging.debug("startProcQ - Unable to acquire a license")
         return False
 
     ## Check if there is any pending tasks in testPath
     if not task.taskInStatusQ():
-        logging.info("No pending tasks")
+        logging.info("startProcQ - No pending tasks")
         return False
 
     return True
@@ -164,17 +164,17 @@ def aProcess(lock):
 
         ## Clone the CommonCore repo
         env = gitRepo.mkEnv(aTask)
-        if env['status']==False:
+        if env['status'] == False:
             dbConn.modMultiVals(
                 'testPath',
                 ['id'], [aTask['id']],
-                ['status', 'msg'], ['failed', env['result']]
+                ['status', 'msg'], ['fail', env['result']]
             )
             sys.exit(EXITCODE_REPOFAIL)
 
         ## Make a StepWise image
         img = image.make(aTask, env['result'])
-        if img['status']==False:
+        if img['status'] == False:
             dbConn.modMultiVals(
                 'testPath',
                 ['id'], [aTask['id']],
@@ -184,21 +184,25 @@ def aProcess(lock):
 
     except SystemExit as e:
         if e.code == EXITCODE_NOMMA:
-            logging.info("{}: No pending task".format(os.getpid()))
+            logging.info("{}: aProcess - No pending task".format(os.getpid()))
         if e.code == EXITCODE_NOLICENSE:
-            logging.warning("{}: No Mathematica license".format(os.getpid()))
+            logging.warning("{}: aProcess - No Mathematica license".format(
+                os.getpid()))
         if e.code == EXITCODE_IMGFAIL:
-            logging.error("{}: Failed on making a StepWise image".format(
+            logging.error( \
+                "{}: aProcess - Failed on making a StepWise image".format(
                 os.getpid()
             ))
         if e.code == EXITCODE_REPOFAIL:
             logging.error(
-                "{}: Failed on cloning the CommonCore repo".format(os.getpid()))
+                "{}: aProcess - Failed on cloning the CommonCore repo".format(
+                    os.getpid()))
         if e.code == EXITCODE_BADMAINPATH:
-            logging.error("{}: Invalid main path".format(os.getpid()))
+            logging.error("{}: aProcess - Invalid main path".format(
+                os.getpid()))
         # runTestingQ = False
     except:
-        logging.error("{}: Unexpected error".format(os.getpid()))
+        logging.error("{}: aProcess - Unexpected error".format(os.getpid()))
         # runTestingQ = False
     else:
         ## Add some environment variables into a task
@@ -207,7 +211,8 @@ def aProcess(lock):
             if os.environ.get("loadFromImgOn").lower()=="true" else False
         aTask["img"] = img['result']
 
-        logging.info("{}: running a task in mma .....".format(os.getpid()))
+        logging.info("{}: aProcess - running a task in mma .....".format(
+            os.getpid()))
         task.run(aTask)
         time.sleep(5)
     finally:
