@@ -82,6 +82,11 @@ def next(
 
     return rslt
 
+#######################################
+# Run a test task
+# parameters:
+#######################################
+
 
 #######################################
 # Run a test task
@@ -102,7 +107,8 @@ def run(aTask):
             "-script",
             os.environ.get("runTask"),
             util.toStr(aTask)],
-            timeout=int(os.environ.get("runTaskTime")), check=True
+            timeout=int(aTask["limitPathTime"])+60,
+            check=True
         )
     except subprocess.CalledProcessError:
         msg = "Error from runTask.wl"
