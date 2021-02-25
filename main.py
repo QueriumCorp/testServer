@@ -40,8 +40,8 @@ EXITCODE_REPOFAIL = 8
 EXITCODE_BADMAINPATH = 9
 EXITCODE_INVALIDREF = 10
 
-logging.basicConfig(level=logging.DEBUG)
-# logging.basicConfig(level=logging.INFO)
+# logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 
 ###############################################################################
 # Support functions
@@ -150,7 +150,7 @@ def startProcQ():
 def aProcess(lock):
     logging.info("{}: Starting a process".format(os.getpid()))
 
-    # runTestingQ = True
+    runTestingQ = True
     lock.acquire()
     try:
         ## Is there a Mathematica license
@@ -200,11 +200,14 @@ def aProcess(lock):
         if e.code == EXITCODE_BADMAINPATH:
             logging.error("{}: aProcess - Invalid main path".format(
                 os.getpid()))
-        # runTestingQ = False
+        runTestingQ = False
     except:
         logging.error("{}: aProcess - Unexpected error".format(os.getpid()))
-        # runTestingQ = False
-    else:
+        runTestingQ = False
+    finally:
+        lock.release()
+
+    if runTestingQ:
         ## Add some environment variables into a task
         aTask["dirCommonCore"] = env['result']['dirRepo']
         aTask["loadFromImgOn"] = True \
@@ -215,8 +218,6 @@ def aProcess(lock):
             os.getpid()))
         task.run(aTask)
         time.sleep(5)
-    finally:
-        lock.release()
 
 
 #######################################
@@ -269,6 +270,9 @@ if __name__ == '__main__':
             # aProc.join()
         except KeyboardInterrupt:
             ### Add cleanup code if needed
+            # wait for all the process to finish
+            for p in PROCESSES:
+                p.join()
             terminateQ = True
         except multiprocessing.ProcessError as err:
             logging.error(err)
