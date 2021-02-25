@@ -80,30 +80,30 @@ def mkEnv(task):
         ## If the repo doesn't exist, clone it
         if not os.path.isdir(
             os.path.join(dirs["dirRepo"], ".git")):
-            logging.debug("{pid}: Cloning a repo .....".format(pid=pid))
+            logging.debug("Cloning a repo .....")
             cloneRepo(dirs["dirRepo"], task)
         ## Make sure the repo reference is the same as task['gitHash']
         aRepo = git.Repo(dirs["dirRepo"])
         if aRepo.active_branch.commit.hexsha!=task['gitHash']:
             checkoutRef(aRepo, task['gitHash'])
     except git.GitCommandError:
-        logging.error("{pid}: Invalid branch - {branch}".format(
-            pid=pid, branch=task['gitBranch']
+        logging.error("Invalid branch: {branch}".format(
+            branch=task['gitBranch']
         ))
         return {
             "status": False,
             "result": "Invalid gitBranch"
         }
     except git.BadName:
-        logging.error("{pid}: Invalid ref - {hash}".format(
-            pid=pid, hash=task['gitHash']
+        logging.error("Invalid ref: {hash}".format(
+            hash=task['gitHash']
         ))
         return {
             "status": False,
             "result": "Invalid gitHash"
         }
     except:
-        logging.error("{pid}: Some unexpected error".format(pid=pid))
+        logging.error("Some unexpected error")
         return {
             "status": False,
             "result": "Unexpected error: gitRepo-mkEnv"

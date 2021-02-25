@@ -93,7 +93,6 @@ def next(
 # parameters:
 #######################################
 def run(aTask):
-    logging.debug('run tasks')
     logging.debug(aTask)
 
     # Remove some fields
@@ -102,29 +101,36 @@ def run(aTask):
 
     # Run the testing script on a task
     try:
+        # Configure stdout setting for Mma
+        mmaPrompt = subprocess.DEVNULL
+        if os.environ.get("mmaPromptOn").lower() == "true":
+            mmaPrompt = None
+
         subprocess.run([
             os.environ.get("wolframscript"),
             "-script",
             os.environ.get("runTask"),
             util.toStr(aTask)],
             timeout=int(aTask["limitPathTime"])+60,
-            check=True
+            check=True,
+            stdout=mmaPrompt
         )
+
     except subprocess.CalledProcessError:
         msg = "Error from runTask.wl"
         dbConn.modMultiVals("testPath", ["id"], [aTask["id"]],
             ["status", "msg"], ["fail", msg])
-        logging.error("Task ID {id} failed: {msg}".format(
+        logging.error("Task {id} failed: {msg}".format(
             id=aTask["id"], msg=msg))
     except TimeoutExpired:
         msg = "runTask.wl didn't end in time"
         dbConn.modMultiVals("testPath", ["id"], [aTask["id"]],
             ["status", "msg"], ["fail", msg])
-        logging.error("Task ID {id} failed: {msg}".format(
+        logging.error("Task {id} failed: {msg}".format(
             id=aTask["id"], msg=msg))
     except:
         msg = "Unknown error"
         dbConn.modMultiVals("testPath", ["id"], [aTask["id"]],
             ["status", "msg"], ["fail", msg])
-        logging.error("Task ID {id} failed: {msg}".format(
+        logging.error("Task {id} failed: {msg}".format(
             id=aTask["id"], msg=msg))

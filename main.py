@@ -18,6 +18,7 @@
 from dotenv import load_dotenv
 load_dotenv()
 import logging
+from multiprocessing import log_to_stderr, get_logger
 import multiprocessing
 import subprocess
 from subprocess import TimeoutExpired
@@ -41,7 +42,12 @@ EXITCODE_BADMAINPATH = 9
 EXITCODE_INVALIDREF = 10
 
 # logging.basicConfig(level=logging.DEBUG)
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s, %(process)d-%(levelname)s: %(message)s')
+# log_to_stderr()
+# logger = get_logger()
+# logger.setLevel(logging.INFO)
 
 ###############################################################################
 # Support functions
@@ -53,8 +59,9 @@ logging.basicConfig(level=logging.INFO)
 def init():
     ## Create a directory for the CommonCore repos
     if not os.path.isdir(os.environ.get('dirTest')):
-        print("Created a testing directory:", os.environ.get('dirTest'))
         os.mkdir(os.environ.get('dirTest'))
+        logging.info("Created a testing directory: {}".format(
+            os.environ.get('dirTest')))
 
 #######################################
 # Manage dead processes
@@ -132,23 +139,22 @@ def startProcQ():
 
     ## Verify not all of the license are used
     if len(PROCESSES)>=int(os.environ.get('licenseLimit')):
-        logging.debug("startProcQ - All licenses are in use")
+        logging.info("All licenses are in use")
         return False
 
     ## Verify availability of of a Mathematica license
     if not gotLicenseQ():
-        logging.debug("startProcQ - Unable to acquire a license")
         return False
 
     ## Check if there is any pending tasks in testPath
     if not task.taskInStatusQ():
-        logging.info("startProcQ - No pending tasks")
+        logging.info("No pending tasks")
         return False
 
     return True
 
 def aProcess(lock):
-    logging.info("{}: Starting a process".format(os.getpid()))
+    logging.info("Starting a process")
 
     runTestingQ = True
     lock.acquire()
@@ -184,25 +190,18 @@ def aProcess(lock):
 
     except SystemExit as e:
         if e.code == EXITCODE_NOMMA:
-            logging.info("{}: aProcess - No pending task".format(os.getpid()))
-        if e.code == EXITCODE_NOLICENSE:
-            logging.warning("{}: aProcess - No Mathematica license".format(
-                os.getpid()))
+            logging.info("No pending task")
+        # if e.code == EXITCODE_NOLICENSE:
+            # logging.warning("No Mathematica license")
         if e.code == EXITCODE_IMGFAIL:
-            logging.error( \
-                "{}: aProcess - Failed on making a StepWise image".format(
-                os.getpid()
-            ))
+            logging.error("Failed on making a StepWise image")
         if e.code == EXITCODE_REPOFAIL:
-            logging.error(
-                "{}: aProcess - Failed on cloning the CommonCore repo".format(
-                    os.getpid()))
+            logging.error("Failed on cloning the CommonCore repo")
         if e.code == EXITCODE_BADMAINPATH:
-            logging.error("{}: aProcess - Invalid main path".format(
-                os.getpid()))
+            logging.error("Invalid main path")
         runTestingQ = False
     except:
-        logging.error("{}: aProcess - Unexpected error".format(os.getpid()))
+        logging.error("Unexpected error")
         runTestingQ = False
     finally:
         lock.release()
@@ -214,8 +213,7 @@ def aProcess(lock):
             if os.environ.get("loadFromImgOn").lower()=="true" else False
         aTask["img"] = img['result']
 
-        logging.info("{}: aProcess - running a task in mma .....".format(
-            os.getpid()))
+        logging.info("Testing Task {id} .....".format(id=aTask["id"]))
         task.run(aTask)
         time.sleep(5)
 
@@ -257,7 +255,7 @@ if __name__ == '__main__':
     while not terminateQ:
         try:
             ## Kill expired and hang processes
-            killRougeProcesses()
+            # killRougeProcesses() - may need to be implemented in the future
 
             ## Start process if any free license and pending task
             if not startProcQ():

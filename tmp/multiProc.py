@@ -5,38 +5,44 @@ import multiprocessing
 import os
 import time
 import random
+import logging
+from multiprocessing import log_to_stderr, get_logger
 
 def worker(lock, id):
     lock.acquire()
     sleepTime = random.randint(1, 10)
-    print("Worker {id} ({pid}) acquired lock, sleeping for {num}" \
-        .format(pid=os.getpid(), id=id, num=sleepTime))
+    # print("Worker {id} ({pid}) acquired lock, sleeping for {num}" \
+    #     .format(pid=os.getpid(), id=id, num=sleepTime))
     time.sleep(sleepTime)
     # randNum = random.randint(50, 100)
     # for i in range(randNum):
     #     time.sleep(0.5)
     #     rslt = i * i
-    print("Worker {id} ({pid}) is releasing the lock".format(
-        pid=os.getpid(), id=id))
+    # print("Worker {id} ({pid}) is releasing the lock".format(
+    #     pid=os.getpid(), id=id))
     lock.release()
 
 def whoIsAlive():
-    print("- - - - - ")
+    # print("- - - - - ")
     for i in range(len(PROCESSES)):
         if PROCESSES[i].is_alive():
             timedelta = time.process_time()-STARTTIME[i]
-            print("Worker {id} ({pid}) is ALIVE for {timediff}".format(
-                id=i, pid=PROCESSES[i].pid, timediff=timedelta))
-        else:
-            print("Worker {id} ({pid}) is DEAD, exitcode {code}".format(
-                id=i, pid=PROCESSES[i].pid, code=PROCESSES[i].exitcode))
+            # print("Worker {id} ({pid}) is ALIVE for {timediff}".format(
+            #     id=i, pid=PROCESSES[i].pid, timediff=timedelta))
+        # else:
+            # print("Worker {id} ({pid}) is DEAD, exitcode {code}".format(
+            #     id=i, pid=PROCESSES[i].pid, code=PROCESSES[i].exitcode))
 
 ###############################################################################
 #   Main
 ###############################################################################
 if __name__ == '__main__':
-    print("Master process: {pid}".format(pid=os.getpid()))
-    workerLimit = 10
+    log_to_stderr()
+    logger = get_logger()
+    logger.setLevel(logging.INFO)
+
+    # print("Master process: {pid}".format(pid=os.getpid()))
+    workerLimit = 4
     PROCESSES = []
     STARTTIME = []
     LOCK = multiprocessing.Lock()
@@ -74,4 +80,4 @@ if __name__ == '__main__':
     for p in PROCESSES:
         p.join()
 
-    print("Master process: Completed".format(pid=os.getpid()))
+    # print("Master process: Completed".format(pid=os.getpid()))
