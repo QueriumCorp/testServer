@@ -36,7 +36,7 @@ def mkArgs(dirs):
 ###############################################################################
 # Main logic
 ###############################################################################
-def make(aTask, dirs, rmImgQ=True):
+def make(aTask, dirs, rmImgQ=False):
     # Arguments to mkImg
     args = mkArgs(dirs)
     logging.debug("args: {}".format(args))
