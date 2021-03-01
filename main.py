@@ -87,16 +87,16 @@ def manageDead():
 def gotLicenseQ():
 
     ## Verify the test script
-    testFile = os.path.join(os.getcwd(), "testScript.wl")
-    if not os.path.isfile(testFile):
-        logging.warning("gotLicenseQ - Missing: {}".format(testFile))
+    if not os.path.isfile(os.environ.get('testScript')):
+        logging.warning("gotLicenseQ - Missing testScript: {}".format(
+            os.environ.get('testScript')))
 
     ## Run wolframScript to test Mathematica license availability
     try:
         rslt = subprocess.check_output([
             os.environ.get('wolframscript'),
             "-script",
-            testFile], timeout=5
+            os.environ.get('testScript')], timeout=5
         )
     except subprocess.TimeoutExpired:
         logging.error("gotLicenseQ - TimeoutExpired")
