@@ -65,7 +65,7 @@ def make(aTask, dirs, rmImgQ=False):
             os.environ.get("wolframscript"),
             "-script",
             os.environ.get("mkImg"),
-            util.toStr(args)],
+            util.toJsonStr(args)],
             timeout=int(os.environ.get("mkImgTime")), check=True
         )
     except subprocess.CalledProcessError:
