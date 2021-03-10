@@ -49,6 +49,7 @@ If[Length[Global`$confTesting] < 1 && Length[$CommandLine] > 0,
   Print["$CommandLine[[4]]: ", $CommandLine[[4]]];
   Global`$confTesting = ImportString[$CommandLine[[4]], "RawJSON"];
   Print["$CommandLine: ", Global`$confTesting];
+  Print["FullForm: ", FullForm[Global`$confTesting]];
 ];
 If[Length[Global`$confTesting] < 1,
   Print[$ProcessID, " Unable to acquire the command arguments"];
