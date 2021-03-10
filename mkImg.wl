@@ -42,11 +42,15 @@ Print[$ProcessID,
 (*** Linux: arguments passed as $CommandLine ***)
 Global`$confTesting = <||>;
 If[Length[$ScriptCommandLine] > 0,
+  Print["$ScriptCommandLine[[2]]: ", $ScriptCommandLine[[2]]]
   Global`$confTesting = ImportString[$ScriptCommandLine[[2]], "RawJSON"];
 ];
 If[Length[Global`$confTesting] < 1 && Length[$CommandLine] > 0,
+  Print["$CommandLine[[4]]: ", $CommandLine[[4]]]
   Global`$confTesting = ImportString[$CommandLine[[4]], "RawJSON"];
 ];
+Print["$ScriptCommandLine: ", $ScriptCommandLine];
+Print["$CommandLine: ", $CommandLine];
 If[Length[Global`$confTesting] < 1,
   Print[$ProcessID, " Unable to acquire the command arguments"];
   Exit[4];
