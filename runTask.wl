@@ -110,7 +110,7 @@ If[dbStatus =!= 1,
   Print[$ProcessID, " Failed to update testPath with pid, status, started"];
   Exit[7];
 ];
-Print[$ProcessID, " started task ", $testTask["id"], " at ", currTime];
+Print[$ProcessID, " STARTED - Task ", $testTask["id"], " at ", currTime];
 
 (*** Run testing ***)
 testRslt = StepWise`runTestTask[$testTask];
