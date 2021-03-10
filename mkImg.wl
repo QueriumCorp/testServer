@@ -35,11 +35,25 @@ Print["- - - - - - - - - - - - - - - - - - - - - - - - - "];
 Print[$ProcessID,
       " START: making StepWise image: ",
       DateString["ISODateTime", TimeZone -> 0]];
-(*Print["Print[$CommandLine]: ", $ScriptCommandLine];*)
 
-(*** Read JSON argument ***)
-Global`$confTesting = ImportString[$ScriptCommandLine[[2]], "RawJSON"];
-Scan[Print[#, ": ", Global`$confTesting[#]]&, Keys[Global`$confTesting]];
+(*** Acquire command line arguments to be used for configuration in
+     building an SW image ***)
+(*** MacOS: arguments passed as $ScriptCommandLine ***)
+(*** Linux: arguments passed as $CommandLine ***)
+Global`$confTesting = <||>;
+If[Length[$ScriptCommandLine] > 0,
+  Global`$confTesting = ImportString[$ScriptCommandLine[[2]], "RawJSON"];
+];
+If[Length[Global`$confTesting] < 1 && Length[$CommandLine] > 0,
+  Global`$confTesting = ImportString[$CommandLine[[4]], "RawJSON"];
+];
+If[Length[Global`$confTesting] < 1,
+  Print[$ProcessID, " Unable to acquire the command arguments"];
+  Exit[4];
+];
+
+(*** Display the configuration ***)
+(* Scan[Print[#, ": ", Global`$confTesting[#]]&, Keys[Global`$confTesting]]; *)
 
 (*** Verify the directories exist ***)
 If[!DirectoryQ[Global`$confTesting["dirCommonCore"]],

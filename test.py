@@ -107,6 +107,11 @@ def allDir():
 
 
 def mkImg():
+    dbConn.modMultiVals(
+        'testPath',
+        ['id'], [1],
+        ['status', 'msg'], ['pending', '']
+    )
     aTask = task.next()
     # dirs = gitRepo.mkAllDir(aTask)
     rsltEnv = gitRepo.mkEnv(aTask)
