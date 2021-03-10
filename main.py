@@ -229,9 +229,9 @@ def testing():
     # test.repoDir()
     # test.repo()
     # test.allDir()
-    # test.mkImg()
+    test.mkImg()
     # test.runTask()
-    test.modTasks()
+    # test.modTasks()
 
     sys.exit(0)
 
@@ -241,7 +241,7 @@ def testing():
 if __name__ == '__main__':
 
     ### testing code
-    # testing()
+    testing()
 
     ### init the environment
     init()
