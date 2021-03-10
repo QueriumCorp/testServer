@@ -59,14 +59,18 @@ uploadTestResult[aTask_Association, data_Association] :=
     ];
 
 (*** Main Logic ***)
-(*Print["Print[$CommandLine]: ", $ScriptCommandLine];*)
-(* Print["$ScriptCommandLine[[2]]: ", FullForm[$ScriptCommandLine[[2]]]] *)
 
-(*** Read JSON argument ***)
-$testTask = ImportString[$ScriptCommandLine[[2]], "RawJSON"];
-If[Head[$testTask]=!=Association,
-  Print[$ProcessID, "Failed to convert JSON in String to Association"]
-  Exit[6];
+(*** Read task information from command line as a JSON argument ***)
+$testTask = <||>;
+If[Length[$ScriptCommandLine] > 0,
+  $testTask = ImportString[$ScriptCommandLine[[2]], "RawJSON"];
+];
+If[Length[$testTask] < 1 && Length[$CommandLine] > 0,
+  $testTask = ImportString[$CommandLine[[4]], "RawJSON"];
+];
+If[Length[$testTask] < 1,
+  Print[$ProcessID, " Failed to acquire the task as a command argument"];
+  Exit[4];
 ];
 
 (*** Verify the directories exist ***)
