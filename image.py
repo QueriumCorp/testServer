@@ -61,13 +61,21 @@ def make(aTask, dirs, rmImgQ=False):
 
     # Run the imaging script to generate a StepWise image
     try:
+        # Configure stdout setting for Mma
+        mmaPrompt = subprocess.DEVNULL
+        if os.environ.get("mmaPromptOn").lower() == "true":
+            mmaPrompt = None
+
         subprocess.run([
             os.environ.get("wolframscript"),
             "-script",
             os.environ.get("mkImg"),
             util.toJsonStr(args)],
-            timeout=int(os.environ.get("mkImgTime")), check=True
+            timeout=int(os.environ.get("mkImgTime")),
+            check=True,
+            stdout=mmaPrompt
         )
+
     except subprocess.CalledProcessError:
         return {
             "status": False,
