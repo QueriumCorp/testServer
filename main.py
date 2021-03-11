@@ -148,7 +148,7 @@ def startProcQ():
 
     ## Check if there is any pending tasks in testPath
     if not task.taskInStatusQ():
-        logging.info("No pending tasks")
+        logging.debug("No pending tasks")
         return False
 
     return True
@@ -229,9 +229,9 @@ def testing():
     # test.repoDir()
     # test.repo()
     # test.allDir()
-    # test.mkImg()
+    test.mkImg()
     # test.runTask()
-    test.modTasks()
+    # test.modTasks()
 
     sys.exit(0)
 

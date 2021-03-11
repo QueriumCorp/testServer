@@ -30,8 +30,11 @@ def fileGotDataQ(path):
 #######################################
 # Convert a dict to a json string
 #######################################
-def toStr(data):
-    if sys.platform == 'linux':
-        return json.dumps(json.dumps(data, separators=(',', ':')))
+def toJsonStr(data):
+    # Not sure why I had to double encode here. This was making it impossible
+    # build an Association for the configuration in $CommandLine in mkImg.wl.
+    # It happened on swProd00. So commenting it out.
+    # if sys.platform == 'linux':
+    #     return json.dumps(json.dumps(data, separators=(',', ':')))
 
     return json.dumps(data, separators=(',', ':'))

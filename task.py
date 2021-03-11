@@ -110,7 +110,7 @@ def run(aTask):
             os.environ.get("wolframscript"),
             "-script",
             os.environ.get("runTask"),
-            util.toStr(aTask)],
+            util.toJsonStr(aTask)],
             timeout=int(aTask["limitPathTime"])+60,
             check=True,
             stdout=mmaPrompt
