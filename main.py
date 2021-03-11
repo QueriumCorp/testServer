@@ -148,7 +148,7 @@ def startProcQ():
 
     ## Check if there is any pending tasks in testPath
     if not task.taskInStatusQ():
-        logging.info("No pending tasks")
+        logging.debug("No pending tasks")
         return False
 
     return True
