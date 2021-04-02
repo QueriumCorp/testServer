@@ -39,7 +39,7 @@ def getFields(tbl):
         "testSchedule": [
             "id","name","jira","author","gradeStyle","policies","skipStatuses",
             "status","limitPaths","priority","limitPathTime","host","pid","gitBranch","gitHash","mmaVersion","timeOutTime",
-            "ruleMatchTimeOutTime","msg","jiraResp","started","finished","created"
+            "rrule","msg","jiraResp","started","finished","created"
             ],
         "testPath": [
             "id","schedule_id","question_id","path_id","trace_id","diff_id","author",
