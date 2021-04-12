@@ -29,6 +29,18 @@ def taskInStatusQ(status="pending"):
     return True
 
 #######################################
+# Get Mma version. It defaults to 11.1
+#######################################
+def getMmaVersion():
+    ver = "11.1"
+    # Get the version from the configuration
+    if "mmaVersion" in os.environ:
+        ver = os.environ.get("mmaVersion")
+    # Maybe a good idea to acquire the version programmatically by else ... 
+    
+    return ver
+
+#######################################
 # To prevent multiple testServers acquiring the same task, change
 # status, host, and pid fields to "acquired", serverHost, and process ID,
 # respectively. Then get the task
@@ -38,6 +50,9 @@ def taskInStatusQ(status="pending"):
 def next(
     statusCurr="pending", statusNext="acquired", taskId=0, queryAdd="LIMIT 1"):
     tbl = "testPath"
+
+    # Get Mma version of the server
+    mmaVersion = getMmaVersion()
 
     # Update status and started fields
     pid = os.getpid()
@@ -52,7 +67,7 @@ def next(
     else:
         dbConn.modMultiVals(
             tbl,
-            ["status"], [statusCurr],
+            ["status", "mmaVersion"], [statusCurr, mmaVersion],
             ["status", "host", "pid"],
             [statusNext, os.environ.get('serverHost'), pid],
             fltr="ORDER BY priority DESC LIMIT 1"
