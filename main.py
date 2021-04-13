@@ -28,7 +28,6 @@ import time
 import sys
 import json
 
-import test
 import task
 import gitRepo
 import dbConn
@@ -218,30 +217,10 @@ def aProcess(lock):
         time.sleep(5)
 
 
-#######################################
-# Testing
-#######################################
-def testing():
-    # print("gotLicenseQ():", gotLicenseQ())
-    # test.modByPriority()
-    # test.taskNext()
-    # test.modMultiVals()
-    # test.repoDir()
-    # test.repo()
-    # test.allDir()
-    test.mkImg()
-    # test.runTask()
-    # test.modTasks()
-
-    sys.exit(0)
-
 ###############################################################################
 #   Main
 ###############################################################################
 if __name__ == '__main__':
-
-    ### testing code
-    # testing()
 
     ### init the environment
     init()
