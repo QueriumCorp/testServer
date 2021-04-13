@@ -15,23 +15,21 @@
 # To run
 # python3 main.py
 ###############################################################################
-from dotenv import load_dotenv
-load_dotenv()
 import logging
 from multiprocessing import log_to_stderr, get_logger
 import multiprocessing
 import subprocess
 from subprocess import TimeoutExpired
-
 import os
 import time
 import sys
 import json
-
 import task
 import gitRepo
 import dbConn
 import image
+from dotenv import load_dotenv
+load_dotenv()
 
 EXITCODE_NOMMA = 5
 EXITCODE_NOLICENSE = 6
