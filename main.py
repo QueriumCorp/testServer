@@ -151,7 +151,7 @@ def startProcQ():
     return True
 
 def aProcess(lock):
-    logging.info("Starting a process")
+    logging.debug("Starting a process")
 
     runTestingQ = True
     lock.acquire()
@@ -187,7 +187,7 @@ def aProcess(lock):
 
     except SystemExit as e:
         if e.code == EXITCODE_NOMMA:
-            logging.info("No pending task")
+            logging.debug("No pending task")
         # if e.code == EXITCODE_NOLICENSE:
             # logging.warning("No Mathematica license")
         if e.code == EXITCODE_IMGFAIL:
