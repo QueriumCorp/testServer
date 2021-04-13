@@ -3,8 +3,6 @@
 # Install the following module
 # python3 -m pip install gitpython
 ###############################################################################
-from dotenv import load_dotenv
-load_dotenv()
 from datetime import datetime
 import logging
 import os
@@ -12,6 +10,8 @@ import math
 import time
 import git
 import sys
+from dotenv import load_dotenv
+load_dotenv()
 
 ###############################################################################
 # Support functions

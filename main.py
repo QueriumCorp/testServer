@@ -15,24 +15,21 @@
 # To run
 # python3 main.py
 ###############################################################################
-from dotenv import load_dotenv
-load_dotenv()
 import logging
 from multiprocessing import log_to_stderr, get_logger
 import multiprocessing
 import subprocess
 from subprocess import TimeoutExpired
-
 import os
 import time
 import sys
 import json
-
-import test
 import task
 import gitRepo
 import dbConn
 import image
+from dotenv import load_dotenv
+load_dotenv()
 
 EXITCODE_NOMMA = 5
 EXITCODE_NOLICENSE = 6
@@ -154,7 +151,7 @@ def startProcQ():
     return True
 
 def aProcess(lock):
-    logging.info("Starting a process")
+    logging.debug("Starting a process")
 
     runTestingQ = True
     lock.acquire()
@@ -190,7 +187,7 @@ def aProcess(lock):
 
     except SystemExit as e:
         if e.code == EXITCODE_NOMMA:
-            logging.info("No pending task")
+            logging.debug("No pending task")
         # if e.code == EXITCODE_NOLICENSE:
             # logging.warning("No Mathematica license")
         if e.code == EXITCODE_IMGFAIL:
@@ -218,30 +215,10 @@ def aProcess(lock):
         time.sleep(5)
 
 
-#######################################
-# Testing
-#######################################
-def testing():
-    # print("gotLicenseQ():", gotLicenseQ())
-    # test.modByPriority()
-    # test.taskNext()
-    # test.modMultiVals()
-    # test.repoDir()
-    # test.repo()
-    # test.allDir()
-    test.mkImg()
-    # test.runTask()
-    # test.modTasks()
-
-    sys.exit(0)
-
 ###############################################################################
 #   Main
 ###############################################################################
 if __name__ == '__main__':
-
-    ### testing code
-    # testing()
 
     ### init the environment
     init()
