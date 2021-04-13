@@ -8,15 +8,15 @@
 # Need the following modules
 # python3 -m pip install mysql-connector-python
 
+# NOTE: must import mysql.connector before load_dotenv. Otherwise, it produces
+# segmentation fault
 ###############################################################################
+import os
+import mysql.connector
+from mysql.connector import errorcode
 from dotenv import load_dotenv
 load_dotenv()
-from mysql.connector import errorcode
-import mysql.connector
-import os
-import json
 import logging
-import sys
 
 ###############################################################################
 # Support functions
