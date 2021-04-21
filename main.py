@@ -136,7 +136,7 @@ def startProcQ():
 
     ## Verify not all of the license are used
     if len(PROCESSES)>=int(os.environ.get('licenseLimit')):
-        logging.info("All licenses are in use")
+        logging.info("All licenses are in use/No Tasks")
         return False
 
     ## Verify availability of of a Mathematica license
