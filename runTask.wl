@@ -89,15 +89,31 @@ If[$testTask["loadFromImgOn"] && !FileExistsQ[$testTask["img"]],
 SetDirectory[$testTask["dirCommonCore"]];
 If[TrueQ[$testTask["loadFromImgOn"]],
   Print[$ProcessID, " Loading StepWise from an image ....."];
-  Get[$testTask["img"]]
+  Get[$testTask["img"]];
+
+  (***
+  If Stepwise has any overloaded mma functions, they need to be
+  overloaded again after load it's load from an image.
+  ***)
+  Unprotect[Simplify];
+  Simplify[expr_?StepWise`complexExprQ] := Simplify[expr /. {Users`i -> System`I}];
+  Protect[Simplify];
+
+  Unprotect[Factor];
+  Factor[expr_, meth_]:= Factor[expr];
+  Protect[Factor];
+
+  Unprotect[Simplify];
+  Simplify[(form:StepWise`$anyInequality)[x_Symbol, r_Rational]] := form[x,r];
+  Protect[Simplify]
   ,
   Print[$ProcessID, " Loading StepWise without an image ....."];
-  << StepWise.m;
+  << StepWise.m
 ];
 
 (*** Configure global settings ***)
 (* StepWise`$$InTesting$$ = $testTask["inTesting"] - inTesting should come from testPath *)
-StepWise`$$InTesting$$ = True
+StepWise`$$InTesting$$ = True;
 
 (*** Update the testPath table ***)
 Get[FileNameJoin[{$testTask["dirCommonCore"], "include", "mysqlConn.m"}]];
