@@ -1,6 +1,6 @@
 ###############################################################################
-# test.py
 # Testing module
+# python3 test_mysql.py
 ###############################################################################
 import sys
 import dbConn
@@ -11,7 +11,7 @@ load_dotenv()
 import logging
 
 logging.basicConfig(level=logging.DEBUG)
-    
+
 def getRow():
     tbl = "testSchedule"
     cols = ["status"]
@@ -44,4 +44,3 @@ def testConn():
 if __name__ == '__main__':
     testConn()
     # getRow()
-    

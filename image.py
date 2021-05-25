@@ -1,7 +1,5 @@
 ###############################################################################
-# repo.py
-# Install the following module
-# python3 -m pip install gitpython
+# Create StepWise images
 ###############################################################################
 import util
 from subprocess import TimeoutExpired

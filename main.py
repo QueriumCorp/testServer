@@ -1,17 +1,9 @@
 ###############################################################################
-# main.py
 # The main module
-
-# Requirements
-# Python >= 3.4
-# Git 1.7.0 or newer
-
-# Need the following modules
-# python3 -m pip install python-dotenv
-# python3 -m pip install PyMySQL
-# python3 -m pip install psutil
-# python3 -m pip install gitpython
-
+#
+# Get Started documentation
+# https://github.com/QueriumCorp/testServer/wiki/Get-Started
+#
 # To run
 # python3 main.py
 ###############################################################################
@@ -251,4 +243,3 @@ if __name__ == '__main__':
             terminateQ = True
         except multiprocessing.ProcessError as err:
             logging.error(err)
-

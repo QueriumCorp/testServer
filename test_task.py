@@ -1,6 +1,6 @@
 ###############################################################################
-# test.py
 # Testing module
+# python3 test_task.py
 ###############################################################################
 import sys
 import task
@@ -15,7 +15,7 @@ logging.basicConfig(level=logging.DEBUG)
 def getMmaVersion():
     rslt = task.getMmaVersion()
     print(rslt)
-    
+
 def next():
     rslt = task.next()
     print (rslt)

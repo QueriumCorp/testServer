@@ -1,6 +1,5 @@
 ###############################################################################
-# test.py
-# Testing module
+# Manage tasks to be tested
 ###############################################################################
 import sys
 import util
@@ -36,8 +35,8 @@ def getMmaVersion():
     # Get the version from the configuration
     if "mmaVersion" in os.environ:
         ver = os.environ.get("mmaVersion")
-    # Maybe a good idea to acquire the version programmatically by else ... 
-    
+    # Maybe a good idea to acquire the version programmatically by else ...
+
     return ver
 
 #######################################
