@@ -1,13 +1,6 @@
 ###############################################################################
-# dbConn.py
 # MySQL module
-
-# Requirements
-# Python >= 3.4
-
-# Need the following modules
-# python3 -m pip install mysql-connector-python
-
+#
 # NOTE: must import mysql.connector before load_dotenv. Otherwise, it produces
 # segmentation fault
 ###############################################################################

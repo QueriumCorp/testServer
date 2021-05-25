@@ -1,7 +1,5 @@
 ###############################################################################
-# repo.py
-# Install the following module
-# python3 -m pip install gitpython
+# Manage repository
 ###############################################################################
 from datetime import datetime
 import logging
