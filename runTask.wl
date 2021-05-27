@@ -105,15 +105,17 @@ If[TrueQ[$testTask["loadFromImgOn"]],
 
   Unprotect[Simplify];
   Simplify[(form:StepWise`$anyInequality)[x_Symbol, r_Rational]] := form[x,r];
-  Protect[Simplify];
+  Protect[Simplify]
 
   (***
   Overload qEval functions that use Mathematical Operators: *, /, +, and -
   ***)
+  (* 
   StepWise`extractCoef[x_, StepWise`qTimes[n__, wx_]] := 
     StepWise`someTimes[{n}]*StepWise`extractCoef[x, wx] /; (FreeQ[{n}, x] && !FreeQ[wx,x]);
   StepWise`extractCoef[x_, StepWise`qDivide[wx_, n_]] := 
-    StepWise`extractCoef[x, wx]/n /; (FreeQ[n, x] && !FreeQ[wx,x])
+    StepWise`extractCoef[x, wx]/n /; (FreeQ[n, x] && !FreeQ[wx,x]) 
+  *)
   ,
   Print[$ProcessID, " Loading StepWise without an image ....."];
   << StepWise.m
