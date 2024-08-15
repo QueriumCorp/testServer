@@ -1,0 +1,12 @@
+[Unit]
+Description=Multiprocess service that runs pending test tasks.
+
+[Service]
+Type=simple
+User=webappuser
+Environment="DISPLAY=:1"
+ExecStart=/home/webappuser/evan/repos/testServer/.venv/bin/python /usr/local/bin/testServer
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
