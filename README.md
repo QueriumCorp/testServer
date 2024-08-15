@@ -46,11 +46,11 @@ Create a symbolic link to the program in the repository
 ```
 sudo ln -s /home/webappuser/evan/repos/testServer/main.py /usr/local/bin/testServer
 ```
-Copy the unit configuration file to the systemd directory
+Copy the service file to the system service directory
 ```
-sudo cp /home/webappuser/evan/repos/testServer/testServer.service /etc/systemd/system/testServer.service
+sudo cp /home/webappuser/evan/repos/testServer/service/testServer_venv.service /etc/systemd/system/testServer.service
 ```
-Update the values of User, WorkingDirectory, and ExecStart in testServer.service
+Verify and update the values of User, WorkingDirectory, and ExecStart in testServer.service
 ```
 sudo vi /etc/systemd/system/testServer.service
 - - - the file content - - -
@@ -77,6 +77,7 @@ Helpful systemctl commands
 sudo systemctl status testServer
 sudo systemctl restart testServer
 journalctl -u testServer
+journalctl -f -u testServer
 ```
 
 ## Troubleshoot
